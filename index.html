@@ -1690,10 +1690,13 @@
 
     revealElements.forEach(el => observer.observe(el));
 
-    // 下载按钮提示
+    // 下载按钮提示（仅在未配置链接时拦截）
     document.getElementById('download-btn').addEventListener('click', (e) => {
-      e.preventDefault();
-      alert('下载链接尚未配置，请将 #download-btn 的 href 替换为真实下载地址。');
+      const href = document.getElementById('download-btn').getAttribute('href');
+      if (!href || href === '#' || href.includes('placeholder')) {
+        e.preventDefault();
+        alert('下载链接尚未配置，请将 #download-btn 的 href 替换为真实下载地址。');
+      }
     });
 
     // 导航滚动时增加阴影
