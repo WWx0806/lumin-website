@@ -1,0 +1,1712 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lumin — 为长篇小说而生的 AI 写作平台</title>
+  <meta name="description" content="Lumin 是一款专注于长篇小说创作的 AI 写作平台，提供续写、章节诊断、读者改写、前情提要、标签检索、模板市场等专业功能。">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-root: #f5f5f7;
+      --bg-card: rgba(255, 255, 255, 0.82);
+      --bg-solid: #ffffff;
+      --text-primary: #1d1d1f;
+      --text-secondary: #6e6e73;
+      --text-tertiary: #86868b;
+      --apple-blue: #007aff;
+      --apple-blue-hover: #0063cc;
+      --accent-purple: #7c3aed;
+      --accent-teal: #14b8a6;
+      --accent-rose: #f43f5e;
+      --radius-full: 9999px;
+      --radius-lg: 24px;
+      --radius-md: 18px;
+      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
+      --shadow-md: 0 12px 32px rgba(0, 0, 0, 0.08);
+      --shadow-lg: 0 24px 64px rgba(0, 0, 0, 0.12);
+      --font-serif: "Noto Serif SC", "Songti SC", "STSong", serif;
+      --font-sans: "Noto Sans SC", "PingFang SC", "SF Pro Text", -apple-system, BlinkMacSystemFont, sans-serif;
+      --transition: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg-root);
+      color: var(--text-primary);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* 背景光晕 */
+    .ambient-glow {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: -1;
+      background:
+        radial-gradient(circle at 15% 25%, rgba(0, 122, 255, 0.10) 0%, transparent 42%),
+        radial-gradient(circle at 85% 15%, rgba(124, 58, 237, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 70% 80%, rgba(20, 184, 166, 0.08) 0%, transparent 42%);
+    }
+
+    /* 导航 */
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      padding: 18px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      background: rgba(245, 245, 247, 0.72);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+    }
+
+    .nav-logo {
+      font-family: var(--font-serif);
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      color: var(--text-primary);
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      align-items: center;
+    }
+
+    .nav-links a {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: color 0.25s var(--transition);
+    }
+
+    .nav-links a:hover {
+      color: var(--text-primary);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 28px;
+      border-radius: var(--radius-full);
+      font-size: 15px;
+      font-weight: 600;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s var(--transition);
+    }
+
+    .btn-primary {
+      background: var(--apple-blue);
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(0, 122, 255, 0.28);
+    }
+
+    .btn-primary:hover {
+      background: var(--apple-blue-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0, 122, 255, 0.36);
+    }
+
+    .btn-secondary {
+      background: rgba(0, 0, 0, 0.04);
+      color: var(--text-primary);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(0, 0, 0, 0.08);
+    }
+
+    .btn-large {
+      padding: 16px 36px;
+      font-size: 17px;
+    }
+
+    /* Hero */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 140px 40px 100px;
+      position: relative;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 18px;
+      background: rgba(0, 122, 255, 0.08);
+      color: var(--apple-blue);
+      border-radius: var(--radius-full);
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 32px;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeUp 0.8s var(--transition) forwards 0.1s;
+    }
+
+    .hero h1 {
+      font-family: var(--font-serif);
+      font-size: clamp(44px, 7vw, 84px);
+      font-weight: 700;
+      line-height: 1.08;
+      letter-spacing: -2px;
+      max-width: 920px;
+      margin-bottom: 28px;
+      opacity: 0;
+      transform: translateY(24px);
+      animation: fadeUp 0.9s var(--transition) forwards 0.25s;
+    }
+
+    .hero p {
+      font-size: clamp(17px, 2.2vw, 22px);
+      color: var(--text-secondary);
+      max-width: 680px;
+      margin-bottom: 42px;
+      font-weight: 400;
+      opacity: 0;
+      transform: translateY(24px);
+      animation: fadeUp 0.9s var(--transition) forwards 0.4s;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      justify-content: center;
+      opacity: 0;
+      transform: translateY(24px);
+      animation: fadeUp 0.9s var(--transition) forwards 0.55s;
+    }
+
+    .hero-meta {
+      margin-top: 28px;
+      font-size: 13px;
+      color: var(--text-tertiary);
+      opacity: 0;
+      animation: fadeUp 0.9s var(--transition) forwards 0.7s;
+    }
+
+    .hero-visual {
+      width: 100%;
+      max-width: 1200px;
+      margin-top: 80px;
+      position: relative;
+      opacity: 0;
+      transform: translateY(40px);
+      animation: fadeUp 1s var(--transition) forwards 0.85s;
+    }
+
+    .hero-visual-frame {
+      background: var(--bg-card);
+      backdrop-filter: blur(30px) saturate(160%);
+      -webkit-backdrop-filter: blur(30px) saturate(160%);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lg);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      padding: 24px;
+      overflow: hidden;
+    }
+
+    .hero-visual-header {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    .hero-visual-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+
+    .hero-visual-content {
+      display: grid;
+      grid-template-columns: 220px 1fr 260px;
+      gap: 20px;
+      min-height: 420px;
+    }
+
+    .mock-panel {
+      background: rgba(255, 255, 255, 0.7);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid rgba(0, 0, 0, 0.03);
+    }
+
+    .mock-sidebar {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .mock-sidebar-row {
+      height: 14px;
+      border-radius: 6px;
+      background: linear-gradient(90deg, #e8e8ed 0%, #f2f2f5 100%);
+    }
+
+    .mock-sidebar-row:nth-child(3) { width: 70%; }
+    .mock-sidebar-row:nth-child(5) { width: 85%; }
+
+    .mock-editor {
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .mock-line {
+      height: 12px;
+      border-radius: 6px;
+      background: linear-gradient(90deg, #e8e8ed 0%, #f2f2f5 100%);
+    }
+
+    .mock-line.short { width: 65%; }
+
+    .mock-ai {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .mock-ai-card {
+      padding: 16px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid rgba(0, 0, 0, 0.03);
+    }
+
+    .mock-ai-label {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .mock-ai-label.style { background: rgba(0, 122, 255, 0.1); color: var(--apple-blue); }
+    .mock-ai-label.plot { background: rgba(124, 58, 237, 0.1); color: var(--accent-purple); }
+    .mock-ai-label.conflict { background: rgba(244, 63, 94, 0.1); color: var(--accent-rose); }
+
+    /* 通用区块 */
+    section {
+      padding: 120px 40px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .section-header {
+      text-align: center;
+      max-width: 680px;
+      margin: 0 auto 72px;
+    }
+
+    .section-header h2 {
+      font-family: var(--font-serif);
+      font-size: clamp(34px, 4.5vw, 52px);
+      font-weight: 700;
+      line-height: 1.12;
+      margin-bottom: 18px;
+      letter-spacing: -1px;
+    }
+
+    .section-header p {
+      font-size: 18px;
+      color: var(--text-secondary);
+    }
+
+    /* 特性网格 */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .feature-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(24px) saturate(160%);
+      -webkit-backdrop-filter: blur(24px) saturate(160%);
+      border-radius: var(--radius-lg);
+      padding: 36px;
+      box-shadow: var(--shadow-md);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      transition: transform 0.35s var(--transition), box-shadow 0.35s var(--transition);
+    }
+
+    .feature-card:hover {
+      transform: translateY(-6px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .feature-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      margin-bottom: 22px;
+    }
+
+    .feature-card h3 {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .feature-card p {
+      font-size: 15px;
+      color: var(--text-secondary);
+      line-height: 1.65;
+    }
+
+    /* 亮点展示 */
+    .highlight-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      align-items: center;
+      margin-bottom: 100px;
+    }
+
+    .highlight-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .highlight-row.reverse {
+      direction: rtl;
+    }
+
+    .highlight-row.reverse > * {
+      direction: ltr;
+    }
+
+    .highlight-text h3 {
+      font-family: var(--font-serif);
+      font-size: 36px;
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 18px;
+      letter-spacing: -0.8px;
+    }
+
+    .highlight-text p {
+      font-size: 17px;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+      line-height: 1.75;
+    }
+
+    .highlight-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .highlight-list li {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 15px;
+      color: var(--text-primary);
+    }
+
+    .highlight-list li::before {
+      content: "✓";
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: rgba(20, 184, 166, 0.12);
+      color: var(--accent-teal);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .highlight-visual {
+      background: var(--bg-card);
+      backdrop-filter: blur(30px) saturate(160%);
+      -webkit-backdrop-filter: blur(30px) saturate(160%);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      box-shadow: var(--shadow-lg);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+    }
+
+    .diagnosis-rings {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      margin-bottom: 28px;
+    }
+
+    .ring {
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: conic-gradient(var(--apple-blue) 0% 82%, #e8e8ed 82% 100%);
+      position: relative;
+    }
+
+    .ring::before {
+      content: "";
+      position: absolute;
+      inset: 8px;
+      border-radius: 50%;
+      background: #fff;
+    }
+
+    .ring span {
+      position: relative;
+      z-index: 1;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .ring small {
+      position: relative;
+      z-index: 1;
+      font-size: 11px;
+      color: var(--text-secondary);
+    }
+
+    .ring.purple { background: conic-gradient(var(--accent-purple) 0% 76%, #e8e8ed 76% 100%); }
+    .ring.teal { background: conic-gradient(var(--accent-teal) 0% 88%, #e8e8ed 88% 100%); }
+
+    .sensory-bars {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .sensory-bar {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .sensory-bar label {
+      width: 60px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      text-align: right;
+    }
+
+    .sensory-track {
+      flex: 1;
+      height: 8px;
+      border-radius: 4px;
+      background: #e8e8ed;
+      overflow: hidden;
+    }
+
+    .sensory-fill {
+      height: 100%;
+      border-radius: 4px;
+      background: linear-gradient(90deg, var(--apple-blue), var(--accent-purple));
+    }
+
+    .template-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .template-tag {
+      padding: 10px 18px;
+      border-radius: var(--radius-full);
+      background: rgba(0, 0, 0, 0.04);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .template-tag.featured {
+      background: rgba(0, 122, 255, 0.1);
+      color: var(--apple-blue);
+    }
+
+    /* 数据条 */
+    .stats-bar {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .stat-item {
+      text-align: center;
+      padding: 32px 20px;
+      background: var(--bg-card);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+    }
+
+    .stat-item strong {
+      display: block;
+      font-family: var(--font-serif);
+      font-size: 40px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+    }
+
+    .stat-item span {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    /* 下载区块 */
+    .download-section {
+      text-align: center;
+      background: linear-gradient(180deg, transparent 0%, rgba(0, 122, 255, 0.04) 100%);
+    }
+
+    .download-card {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 72px 48px;
+      background: var(--bg-card);
+      backdrop-filter: blur(30px) saturate(160%);
+      -webkit-backdrop-filter: blur(30px) saturate(160%);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lg);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+    }
+
+    .download-card h2 {
+      font-family: var(--font-serif);
+      font-size: 42px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      letter-spacing: -1px;
+    }
+
+    .download-card p {
+      font-size: 17px;
+      color: var(--text-secondary);
+      margin-bottom: 32px;
+    }
+
+    .download-placeholder {
+      display: inline-block;
+      padding: 12px 24px;
+      background: rgba(0, 0, 0, 0.04);
+      border-radius: 12px;
+      font-size: 13px;
+      color: var(--text-tertiary);
+      margin-top: 18px;
+    }
+
+    /* 交互式功能演示 */
+    .demo-section {
+      background: linear-gradient(180deg, #fff 0%, var(--bg-root) 100%);
+    }
+
+    .demo-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 42px;
+      flex-wrap: wrap;
+    }
+
+    .demo-tab {
+      padding: 12px 24px;
+      border-radius: var(--radius-full);
+      background: rgba(0, 0, 0, 0.04);
+      border: 1px solid transparent;
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.25s var(--transition);
+    }
+
+    .demo-tab:hover {
+      background: rgba(0, 0, 0, 0.07);
+      color: var(--text-primary);
+    }
+
+    .demo-tab.active {
+      background: #fff;
+      color: var(--apple-blue);
+      border-color: rgba(0, 122, 255, 0.2);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .demo-panel {
+      display: none;
+      background: var(--bg-card);
+      backdrop-filter: blur(30px) saturate(160%);
+      -webkit-backdrop-filter: blur(30px) saturate(160%);
+      border-radius: var(--radius-lg);
+      padding: 40px;
+      box-shadow: var(--shadow-lg);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      animation: fadeIn 0.4s var(--transition);
+    }
+
+    .demo-panel.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .demo-panel h4 {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 24px;
+    }
+
+    .candidate-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .candidate-card {
+      padding: 24px;
+      border-radius: var(--radius-md);
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: var(--shadow-sm);
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: all 0.3s var(--transition);
+    }
+
+    .candidate-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-md);
+      border-color: rgba(0, 122, 255, 0.15);
+    }
+
+    .candidate-card.selected {
+      border-color: var(--apple-blue);
+      background: rgba(0, 122, 255, 0.04);
+    }
+
+    .candidate-card .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .candidate-card p {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    .interactive-diagnosis {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      align-items: start;
+    }
+
+    .slider-group {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .slider-item {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .slider-item label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .slider-item input[type="range"] {
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+      background: #e8e8ed;
+      outline: none;
+      -webkit-appearance: none;
+    }
+
+    .slider-item input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--apple-blue);
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0, 122, 255, 0.3);
+      transition: transform 0.2s;
+    }
+
+    .slider-item input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.1);
+    }
+
+    .diagnosis-result {
+      padding: 28px;
+      border-radius: var(--radius-md);
+      background: rgba(255, 255, 255, 0.9);
+    }
+
+    .diagnosis-result h5 {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+
+    .score-pills {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .score-pill {
+      padding: 8px 14px;
+      border-radius: var(--radius-full);
+      font-size: 13px;
+      font-weight: 600;
+      background: rgba(0, 0, 0, 0.04);
+    }
+
+    .score-pill.good { background: rgba(16, 185, 129, 0.12); color: #059669; }
+    .score-pill.warn { background: rgba(245, 158, 11, 0.12); color: #d97706; }
+    .score-pill.bad { background: rgba(244, 63, 94, 0.12); color: #e11d48; }
+
+    .rewrite-toggle {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+
+    .toggle-btn {
+      padding: 10px 22px;
+      border-radius: var(--radius-full);
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      background: #fff;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.25s var(--transition);
+    }
+
+    .toggle-btn.active {
+      background: var(--apple-blue);
+      color: #fff;
+      border-color: var(--apple-blue);
+    }
+
+    .rewrite-panel {
+      display: none;
+      padding: 28px;
+      border-radius: var(--radius-md);
+      background: rgba(255, 255, 255, 0.9);
+      line-height: 1.8;
+      font-size: 15px;
+    }
+
+    .rewrite-panel.active {
+      display: block;
+      animation: fadeIn 0.35s var(--transition);
+    }
+
+    /* 功能详情弹窗 */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: rgba(0, 0, 0, 0.35);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 24px;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s var(--transition), visibility 0.3s;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal {
+      width: 100%;
+      max-width: 800px;
+      max-height: 86vh;
+      overflow-y: auto;
+      background: var(--bg-solid);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lg);
+      transform: translateY(20px) scale(0.98);
+      transition: transform 0.35s var(--transition);
+    }
+
+    .modal-overlay.active .modal {
+      transform: translateY(0) scale(1);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 28px 36px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+      position: sticky;
+      top: 0;
+      background: var(--bg-solid);
+      z-index: 1;
+    }
+
+    .modal-header h3 {
+      font-family: var(--font-serif);
+      font-size: 26px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .modal-close {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: none;
+      background: rgba(0, 0, 0, 0.04);
+      font-size: 22px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .modal-close:hover {
+      background: rgba(0, 0, 0, 0.08);
+      color: var(--text-primary);
+    }
+
+    .modal-body {
+      padding: 36px;
+    }
+
+    .modal-image {
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      border-radius: var(--radius-md);
+      background: linear-gradient(135deg, #f2f2f5 0%, #e8e8ed 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-tertiary);
+      margin-bottom: 28px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .modal-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .modal-image-placeholder {
+      text-align: center;
+      padding: 40px;
+    }
+
+    .modal-image-placeholder strong {
+      display: block;
+      font-size: 16px;
+      margin-bottom: 8px;
+      color: var(--text-secondary);
+    }
+
+    .modal-image-placeholder span {
+      font-size: 13px;
+    }
+
+    .modal-body p {
+      font-size: 16px;
+      color: var(--text-secondary);
+      line-height: 1.8;
+      margin-bottom: 20px;
+    }
+
+    .modal-body h4 {
+      font-size: 17px;
+      font-weight: 600;
+      margin: 28px 0 14px;
+    }
+
+    .modal-steps {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .modal-steps li {
+      display: flex;
+      gap: 14px;
+      font-size: 15px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    .modal-steps .step-num {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--apple-blue);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .feature-card {
+      cursor: pointer;
+    }
+
+    /* Footer */
+    footer {
+      padding: 60px 40px;
+      text-align: center;
+      border-top: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    footer .logo {
+      font-family: var(--font-serif);
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    footer p {
+      font-size: 13px;
+      color: var(--text-tertiary);
+    }
+
+    /* 动画 */
+    @keyframes fadeUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s var(--transition), transform 0.8s var(--transition);
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* 响应式 */
+    @media (max-width: 1024px) {
+      .features-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .hero-visual-content {
+        grid-template-columns: 1fr;
+        min-height: auto;
+      }
+
+      .mock-sidebar, .mock-ai {
+        display: none;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .nav {
+        padding: 14px 24px;
+      }
+
+      .nav-links a:not(.btn) {
+        display: none;
+      }
+
+      section {
+        padding: 80px 24px;
+      }
+
+      .hero {
+        padding: 120px 24px 80px;
+      }
+
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .highlight-row {
+        grid-template-columns: 1fr;
+        gap: 36px;
+      }
+
+      .highlight-row.reverse {
+        direction: ltr;
+      }
+
+      .stats-bar {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .diagnosis-rings {
+        flex-wrap: wrap;
+      }
+
+      .download-card {
+        padding: 48px 28px;
+      }
+
+      .candidate-cards,
+      .interactive-diagnosis {
+        grid-template-columns: 1fr;
+      }
+
+      .demo-tabs {
+        gap: 8px;
+      }
+
+      .demo-tab {
+        padding: 10px 16px;
+        font-size: 14px;
+      }
+
+      .demo-panel {
+        padding: 28px 22px;
+      }
+
+      .modal-header {
+        padding: 20px 24px;
+      }
+
+      .modal-header h3 {
+        font-size: 20px;
+      }
+
+      .modal-body {
+        padding: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="ambient-glow"></div>
+
+  <nav class="nav">
+    <a href="#" class="nav-logo">Lumin</a>
+    <div class="nav-links">
+      <a href="#features">核心功能</a>
+      <a href="#highlights">产品亮点</a>
+      <a href="#download" class="btn btn-primary">立即下载</a>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="hero-badge">
+      <span>✦</span>
+      <span>为长篇小说而生的 AI 写作平台</span>
+    </div>
+    <h1>把灵感，写成一部完整的作品</h1>
+    <p>Lumin 将专业的小说创作流程与 AI 能力深度融合，从续写、诊断到改写、总结，让每一位作者都能专注于故事本身。</p>
+    <div class="hero-actions">
+      <a href="#download" class="btn btn-primary btn-large">免费下载</a>
+      <a href="#features" class="btn btn-secondary btn-large">了解功能</a>
+    </div>
+    <div class="hero-meta">支持 Windows · macOS 即将推出</div>
+
+    <div class="hero-visual">
+      <div class="hero-visual-frame">
+        <div class="hero-visual-header">
+          <div class="hero-visual-dot" style="background: #ff5f57;"></div>
+          <div class="hero-visual-dot" style="background: #febc2e;"></div>
+          <div class="hero-visual-dot" style="background: #28c840;"></div>
+        </div>
+        <div class="hero-visual-content">
+          <div class="mock-panel mock-sidebar">
+            <div class="mock-sidebar-row"></div>
+            <div class="mock-sidebar-row"></div>
+            <div class="mock-sidebar-row"></div>
+            <div class="mock-sidebar-row"></div>
+            <div class="mock-sidebar-row"></div>
+          </div>
+          <div class="mock-panel mock-editor">
+            <div class="mock-line"></div>
+            <div class="mock-line"></div>
+            <div class="mock-line short"></div>
+            <div class="mock-line"></div>
+            <div class="mock-line"></div>
+            <div class="mock-line"></div>
+            <div class="mock-line short"></div>
+            <div class="mock-line"></div>
+          </div>
+          <div class="mock-panel mock-ai">
+            <div class="mock-ai-card">
+              <span class="mock-ai-label style">风格</span>
+              <div class="mock-line"></div>
+              <div class="mock-line short"></div>
+            </div>
+            <div class="mock-ai-card">
+              <span class="mock-ai-label plot">剧情推进</span>
+              <div class="mock-line"></div>
+              <div class="mock-line short"></div>
+            </div>
+            <div class="mock-ai-card">
+              <span class="mock-ai-label conflict">冲突强度</span>
+              <div class="mock-line"></div>
+              <div class="mock-line short"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section id="features">
+    <div class="container">
+      <div class="section-header reveal">
+        <h2>一套完整的小说创作工具箱</h2>
+        <p>从素材整理、章节写作到成书诊断，Lumin 在每一个环节都提供了专业的辅助能力。</p>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card reveal" onclick="openFeatureModal('continuation')">
+          <div class="feature-icon" style="background: rgba(0, 122, 255, 0.10);">✍️</div>
+          <h3>AI 智能续写</h3>
+          <p>一次性生成 3 条续写候选，并标注风格、剧情推进与冲突强度，助你快速选出最符合故事走向的段落。</p>
+        </div>
+        <div class="feature-card reveal" onclick="openFeatureModal('diagnosis')">
+          <div class="feature-icon" style="background: rgba(124, 58, 237, 0.10);">🔍</div>
+          <h3>章节质量诊断</h3>
+          <p>从节奏、POV 一致性、对话占比到感官描写密度，多维度量化分析章节质量，并给出可执行的改进建议。</p>
+        </div>
+        <div class="feature-card reveal" onclick="openFeatureModal('rewrite')">
+          <div class="feature-icon" style="background: rgba(244, 63, 94, 0.10);">🎯</div>
+          <h3>读者画像改写</h3>
+          <p>根据目标读者群体调整措辞偏好、叙事节奏与爽点密度，在保留原意和核心剧情的前提下精准适配受众。</p>
+        </div>
+        <div class="feature-card reveal" onclick="openFeatureModal('recap')">
+          <div class="feature-icon" style="background: rgba(20, 184, 166, 0.10);">📖</div>
+          <h3>前情提要</h3>
+          <p>自动生成上章回顾与选中剧情总结，帮你梳理关键事件、人物状态、未解悬念与剧情作用。</p>
+        </div>
+        <div class="feature-card reveal" onclick="openFeatureModal('tags')">
+          <div class="feature-icon" style="background: rgba(245, 158, 11, 0.10);">🏷️</div>
+          <h3>书籍标签与检索</h3>
+          <p>为书籍添加自定义标签，通过标签、字数与最近编辑时间快速筛选项目库，并保留最近打开记录。</p>
+        </div>
+        <div class="feature-card reveal" onclick="openFeatureModal('import')">
+          <div class="feature-icon" style="background: rgba(99, 102, 241, 0.10);">📥</div>
+          <h3>多格式导入</h3>
+          <p>支持 .txt、.md、.docx、.pdf 导入，并提供自动章节识别、仅“第 X 章”、正则拆分等多种拆分策略。</p>
+        </div>
+        <div class="feature-card reveal" onclick="openFeatureModal('editor')">
+          <div class="feature-icon" style="background: rgba(16, 185, 129, 0.10);">📝</div>
+          <h3>Markdown 与富文本统一</h3>
+          <p>默认 Markdown 编辑器支持实时分屏预览与章节大纲导航，同时可在 Markdown 与富文本之间双向切换并保留原文。</p>
+        </div>
+        <div class="feature-card reveal" onclick="openFeatureModal('templates')">
+          <div class="feature-icon" style="background: rgba(236, 72, 153, 0.10);">🎨</div>
+          <h3>模板市场</h3>
+          <p>内置悬疑、科幻、言情、玄幻、仙侠等题材模板，包含故事梗概、人物弧光、节拍表与章节结构，可一键套用。</p>
+        </div>
+        <div class="feature-card reveal" onclick="openFeatureModal('focus')">
+          <div class="feature-icon" style="background: rgba(59, 130, 246, 0.10);">🌙</div>
+          <h3>沉浸式专注模式</h3>
+          <p>一键进入无干扰写作环境，保留 AI 助手入口，支持快捷键召唤，让创作过程既安静又智能。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="demo-section">
+    <div class="container">
+      <div class="section-header reveal">
+        <h2>亲手体验 Lumin 的能力</h2>
+        <p>下面的交互式演示展示了平台最核心的三个 AI 工作流，点击标签切换即可体验。</p>
+      </div>
+
+      <div class="demo-tabs reveal">
+        <button class="demo-tab active" data-tab="continuation">AI 续写候选</button>
+        <button class="demo-tab" data-tab="diagnosis">章节诊断模拟</button>
+        <button class="demo-tab" data-tab="rewrite">读者画像改写</button>
+      </div>
+
+      <div class="demo-content reveal">
+        <!-- AI 续写候选 -->
+        <div class="demo-panel active" id="tab-continuation">
+          <h4>输入上文后，Lumin 一次性给出 3 条续写候选</h4>
+          <div class="candidate-cards">
+            <div class="candidate-card selected" onclick="selectCandidate(this)">
+              <span class="badge" style="background: rgba(0,122,255,0.1); color: var(--apple-blue);">风格 · 细腻</span>
+              <p>雨丝斜斜地落在窗台上，林晚把咖啡杯攥得更紧了些。她没有回头，只是从玻璃倒影里看着那个站在门口的男人。</p>
+            </div>
+            <div class="candidate-card" onclick="selectCandidate(this)">
+              <span class="badge" style="background: rgba(124,58,237,0.1); color: var(--accent-purple);">剧情 · 推进</span>
+              <p>门被推开了。男人浑身湿透，手里攥着一封泛黄的信：“你父亲留下的东西，我带来了。”</p>
+            </div>
+            <div class="candidate-card" onclick="selectCandidate(this)">
+              <span class="badge" style="background: rgba(244,63,94,0.1); color: var(--accent-rose);">冲突 · 强烈</span>
+              <p>“你以为躲到这里就安全了？”男人冷笑一声，枪口对准了她的后背，“把东西交出来。”</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 章节诊断模拟 -->
+        <div class="demo-panel" id="tab-diagnosis">
+          <h4>拖动滑块，实时查看章节质量诊断结果</h4>
+          <div class="interactive-diagnosis">
+            <div class="slider-group">
+              <div class="slider-item">
+                <label>节奏紧凑度 <span id="val-rhythm">82</span></label>
+                <input type="range" min="0" max="100" value="82" id="slider-rhythm" oninput="updateDiagnosis()">
+              </div>
+              <div class="slider-item">
+                <label>POV 一致性 <span id="val-pov">76</span></label>
+                <input type="range" min="0" max="100" value="76" id="slider-pov" oninput="updateDiagnosis()">
+              </div>
+              <div class="slider-item">
+                <label>对话占比 <span id="val-dialog">65</span></label>
+                <input type="range" min="0" max="100" value="65" id="slider-dialog" oninput="updateDiagnosis()">
+              </div>
+              <div class="slider-item">
+                <label>感官描写 <span id="val-sensory">58</span></label>
+                <input type="range" min="0" max="100" value="58" id="slider-sensory" oninput="updateDiagnosis()">
+              </div>
+            </div>
+            <div class="diagnosis-result">
+              <h5>诊断结论</h5>
+              <div class="score-pills" id="score-pills">
+                <span class="score-pill good">节奏 8.2 · 良好</span>
+                <span class="score-pill warn">POV 7.6 · 注意</span>
+                <span class="score-pill good">对话 6.5 · 适中</span>
+                <span class="score-pill warn">感官 5.8 · 可加强</span>
+              </div>
+              <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.7;" id="diagnosis-advice">
+                整体节奏把握良好，建议在关键场景增加感官细节描写，同时检查 POV 切换处是否造成读者出戏。
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 读者画像改写 -->
+        <div class="demo-panel" id="tab-rewrite">
+          <h4>选择目标读者， instantly 看到改写差异</h4>
+          <div class="rewrite-toggle">
+            <button class="toggle-btn active" onclick="switchRewrite('original', this)">原文</button>
+            <button class="toggle-btn" onclick="switchRewrite('youth', this)">青少年读者</button>
+            <button class="toggle-btn" onclick="switchRewrite('web', this)">网文读者</button>
+          </div>
+          <div class="rewrite-panel active" id="rewrite-original">
+            沈默站在旧书店的门口，望着街对面那盏忽明忽暗的霓虹灯。他需要做出一个决定，而这个决定可能会改变接下来的一切。
+          </div>
+          <div class="rewrite-panel" id="rewrite-youth">
+            沈默停在旧书店门口，死死盯着街对面那盏一闪一闪的霓虹灯。心跳得有点快。他知道，接下来这个决定，可能会让一切都变得不一样。
+          </div>
+          <div class="rewrite-panel" id="rewrite-web">
+            沈默站在旧书店门口，目光如刀锋般锁定街对面那盏忽明忽暗的霓虹灯。下一刻，他做出了决定——这一决定，将彻底改写他的命运！
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="highlights" style="background: #fff;">
+    <div class="container">
+      <div class="section-header reveal">
+        <h2>为什么选择 Lumin</h2>
+        <p>我们不止提供 AI 生成，更关注小说创作的专业流程与作者的真实体验。</p>
+      </div>
+
+      <div class="highlight-row reveal">
+        <div class="highlight-text">
+          <h3>像编辑一样审视你的章节</h3>
+          <p>传统的 AI 写作工具只帮你“写”，Lumin 还帮你“看”。章节质量诊断会从节奏、视角、对话、感官等多维度给出评分与建议，让你像专业编辑一样审视自己的作品。</p>
+          <ul class="highlight-list">
+            <li>节奏诊断：识别拖沓与跳跃</li>
+            <li>POV 一致性：标出问题片段</li>
+            <li>感官描写密度：视觉/听觉/嗅觉/触觉/味觉五维分析</li>
+          </ul>
+        </div>
+        <div class="highlight-visual">
+          <div class="diagnosis-rings">
+            <div class="ring"><span>8.2</span><small>节奏</small></div>
+            <div class="ring purple"><span>7.6</span><small>POV</small></div>
+            <div class="ring teal"><span>8.8</span><small>对话</small></div>
+          </div>
+          <div class="sensory-bars">
+            <div class="sensory-bar"><label>视觉</label><div class="sensory-track"><div class="sensory-fill" style="width: 85%;"></div></div></div>
+            <div class="sensory-bar"><label>听觉</label><div class="sensory-track"><div class="sensory-fill" style="width: 60%;"></div></div></div>
+            <div class="sensory-bar"><label>嗅觉</label><div class="sensory-track"><div class="sensory-fill" style="width: 35%;"></div></div></div>
+            <div class="sensory-bar"><label>触觉</label><div class="sensory-track"><div class="sensory-fill" style="width: 50%;"></div></div></div>
+            <div class="sensory-bar"><label>味觉</label><div class="sensory-track"><div class="sensory-fill" style="width: 20%;"></div></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="highlight-row reverse reveal">
+        <div class="highlight-text">
+          <h3>为不同读者，写出不同版本</h3>
+          <p>同一部作品可以面向不同年龄、性别与阅读偏好的读者。Lumin 的读者画像改写会在保留核心剧情的前提下，调整叙事节奏与用词风格，帮你探索作品的更多可能性。</p>
+          <ul class="highlight-list">
+            <li>自定义目标受众</li>
+            <li>调整措辞偏好与爽点密度</li>
+            <li>支持插入光标或替换原文</li>
+          </ul>
+        </div>
+        <div class="highlight-visual">
+          <div class="template-tags">
+            <span class="template-tag">青少年奇幻</span>
+            <span class="template-tag featured">网文快节奏</span>
+            <span class="template-tag">女性向言情</span>
+            <span class="template-tag">硬核科幻</span>
+            <span class="template-tag">悬疑推理</span>
+            <span class="template-tag">武侠江湖</span>
+            <span class="template-tag">都市职场</span>
+            <span class="template-tag featured">轻松甜宠</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="highlight-row reveal">
+        <div class="highlight-text">
+          <h3>专业的项目与素材管理</h3>
+          <p>长篇小说往往涉及大量章节、人物与设定。Lumin 提供标签检索、最近打开、多格式导入与模板市场，让你的创作资产井井有条。</p>
+          <ul class="highlight-list">
+            <li>多格式导入与智能章节拆分</li>
+            <li>书籍标签与项目库筛选</li>
+            <li>题材模板一键创建新书</li>
+          </ul>
+        </div>
+        <div class="highlight-visual">
+          <div class="mock-panel mock-sidebar" style="gap: 14px; min-height: 220px;">
+            <div class="mock-sidebar-row"></div>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap; margin: 8px 0;">
+              <span class="template-tag featured">连载中</span>
+              <span class="template-tag">待润色</span>
+              <span class="template-tag">科幻</span>
+            </div>
+            <div class="mock-sidebar-row"></div>
+            <div class="mock-sidebar-row"></div>
+            <div class="mock-sidebar-row"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <div class="section-header reveal">
+        <h2>数字背后的创作体验</h2>
+      </div>
+      <div class="stats-bar reveal">
+        <div class="stat-item">
+          <strong>9+</strong>
+          <span>核心 AI 工具</span>
+        </div>
+        <div class="stat-item">
+          <strong>5</strong>
+          <span>内置题材模板</span>
+        </div>
+        <div class="stat-item">
+          <strong>4</strong>
+          <span>支持导入格式</span>
+        </div>
+        <div class="stat-item">
+          <strong>∞</strong>
+          <span>自定义标签</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="download" class="download-section">
+    <div class="container">
+      <div class="download-card reveal">
+        <h2>开始你的下一部长篇小说</h2>
+        <p>下载 Lumin，体验 AI 与专业写作流程结合的全新创作方式。</p>
+        <a href="#" class="btn btn-primary btn-large" id="download-btn">立即下载</a>
+        <div class="download-placeholder">下载链接占位符 · 请在 app.js 中替换为真实下载地址</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="modal-overlay" id="feature-modal" onclick="closeFeatureModal(event)">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <h3><span id="modal-icon"></span> <span id="modal-title"></span></h3>
+        <button class="modal-close" onclick="closeFeatureModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-image" id="modal-image">
+          <div class="modal-image-placeholder">
+            <strong>功能截图占位</strong>
+            <span>后续将替换为平台真实界面截图</span>
+          </div>
+        </div>
+        <p id="modal-desc"></p>
+        <h4>使用流程</h4>
+        <ul class="modal-steps" id="modal-steps"></ul>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="logo">Lumin</div>
+    <p>© 2026 Lumin. 为长篇小说创作者打造。</p>
+  </footer>
+
+  <script>
+    // 功能详情数据
+    const featureDetails = {
+      continuation: {
+        icon: '✍️',
+        title: 'AI 智能续写',
+        desc: '在编辑器中输入上文后，点击右侧 AI 工具栏的“续写”按钮，Lumin 会调用你配置的 AI 接口，一次生成 3 条不同风格的续写候选。每条候选都附带“风格”“剧情推进”“冲突强度”标签，方便你根据当前章节需要快速挑选或组合。',
+        steps: ['选中或定位到需要续写的段落', '点击“AI 续写”，等待生成 3 条候选', '对比标签与内容，点击心仪候选插入编辑器']
+      },
+      diagnosis: {
+        icon: '🔍',
+        title: '章节质量诊断',
+        desc: '“章节诊断”会从节奏、POV 一致性、对话占比、感官描写密度四个维度对当前章节进行量化评分。诊断报告包含综合评分环、分项评分状态、问题片段定位与改进建议，帮助你像编辑一样审视作品。',
+        steps: ['在编辑器中打开目标章节', '选择“章节诊断”并发送当前章节', '查看评分环与感官密度条，逐项优化']
+      },
+      rewrite: {
+        icon: '🎯',
+        title: '读者画像改写',
+        desc: '指定目标读者群体（如“青少年奇幻读者”“网文快节奏读者”），Lumin 会在保留原意与核心剧情的前提下，调整措辞偏好、叙事节奏与爽点密度。改写结果支持复制、插入光标处或替换原文。',
+        steps: ['输入目标受众描述', '选择改写来源（当前章节或选中文字）', '调整侧重维度，获取改写结果并应用']
+      },
+      recap: {
+        icon: '📖',
+        title: '前情提要',
+        desc: '“前情提要”提供两种模式：上章回顾会自动梳理 1-3 个前序章节的关键事件、人物状态与未解悬念；选中总结则会分析你选中的文本，输出剧情作用、人物关系、伏笔与情感影响等要点。',
+        steps: ['点击“前情提要”打开弹窗', '切换“上章回顾”或“选中总结”标签', '将生成的内容复制或插入到当前章节']
+      },
+      tags: {
+        icon: '🏷️',
+        title: '书籍标签与检索',
+        desc: '在“书籍信息”弹窗中为当前书籍添加标签（如“连载中”“已完结”“待润色”），标签会持久化写入书籍 JSON。项目库弹窗支持按标签、字数范围、最近编辑时间筛选，并展示最近打开的书籍列表。',
+        steps: ['打开“书籍信息”，输入并添加标签', '使用“打开项目”进入项目库', '通过标签或筛选条件快速定位书籍']
+      },
+      import: {
+        icon: '📥',
+        title: '多格式导入',
+        desc: '支持导入 .txt、.md、.docx、.pdf 文件。导入时可选择自动章节识别、仅“第 X 章”、仅“第 X 回”、纯数字标题、不拆分等多种策略；批量导入时支持正则拆分，方便把已有稿件快速迁移到 Lumin。',
+        steps: ['点击导入按钮，选择本地文件', '选择章节拆分策略并预览', '确认导入后自动按规则生成章节']
+      },
+      editor: {
+        icon: '📝',
+        title: 'Markdown 与富文本统一',
+        desc: '默认使用 Markdown 编辑器，左侧编辑、右侧实时预览，右侧大纲面板根据 H2/H3 自动生成章节导航。你可以随时在 Markdown 与富文本之间切换，原文 Markdown 会被保留，避免内容丢失。',
+        steps: ['在 Markdown 编辑器中写作', '通过工具栏切换实时预览或大纲', '需要时切换为富文本编辑器继续编辑']
+      },
+      templates: {
+        icon: '🎨',
+        title: '模板市场',
+        desc: '内置悬疑推理、科幻世界、言情甜虐、东方玄幻、仙侠修真五大题材模板。每个模板包含故事梗概、人物弧光、节拍表与章节结构，创建新书时一键套用即可生成完整框架。',
+        steps: ['打开“模板市场”弹窗', '浏览基础模板、题材模板与我的模板', '选择模板并创建新书，自动生成框架']
+      },
+      focus: {
+        icon: '🌙',
+        title: '沉浸式专注模式',
+        desc: '一键进入全屏专注模式，隐藏侧边栏与多余 UI，只保留编辑区域与顶部控制栏。控制栏保留 AI 助手按钮，并支持 Ctrl/Cmd+Shift+A 快捷键召唤，退出时自动恢复之前的面板状态。',
+        steps: ['点击专注模式按钮进入全屏', '使用控制栏或快捷键继续调用 AI', '再次点击退出，恢复原有布局']
+      }
+    };
+
+    function openFeatureModal(key) {
+      const data = featureDetails[key];
+      if (!data) return;
+      document.getElementById('modal-icon').textContent = data.icon;
+      document.getElementById('modal-title').textContent = data.title;
+      document.getElementById('modal-desc').textContent = data.desc;
+      document.getElementById('modal-steps').innerHTML = data.steps.map((s, i) =>
+        `<li><span class="step-num">${i + 1}</span>${s}</li>`
+      ).join('');
+      document.getElementById('feature-modal').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeFeatureModal(event) {
+      if (event && event.target !== document.getElementById('feature-modal') && event.target.closest('.modal-close') === null) return;
+      document.getElementById('feature-modal').classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeFeatureModal();
+    });
+
+    // 功能演示标签切换
+    document.querySelectorAll('.demo-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.demo-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.demo-panel').forEach(p => p.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+      });
+    });
+
+    // 续写候选选择
+    function selectCandidate(card) {
+      document.querySelectorAll('.candidate-card').forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+    }
+
+    // 章节诊断模拟
+    function updateDiagnosis() {
+      const rhythm = +document.getElementById('slider-rhythm').value;
+      const pov = +document.getElementById('slider-pov').value;
+      const dialog = +document.getElementById('slider-dialog').value;
+      const sensory = +document.getElementById('slider-sensory').value;
+
+      document.getElementById('val-rhythm').textContent = rhythm;
+      document.getElementById('val-pov').textContent = pov;
+      document.getElementById('val-dialog').textContent = dialog;
+      document.getElementById('val-sensory').textContent = sensory;
+
+      const avg = Math.round((rhythm + pov + dialog + sensory) / 4);
+      const grade = avg >= 80 ? '优秀' : avg >= 65 ? '良好' : avg >= 50 ? '中等' : '需改进';
+
+      function label(v) {
+        return v >= 80 ? '良好' : v >= 65 ? '适中' : v >= 50 ? '注意' : '需加强';
+      }
+
+      document.getElementById('score-pills').innerHTML = `
+        <span class="score-pill ${rhythm >= 65 ? 'good' : 'warn'}">节奏 ${(rhythm / 10).toFixed(1)} · ${label(rhythm)}</span>
+        <span class="score-pill ${pov >= 65 ? 'good' : 'warn'}">POV ${(pov / 10).toFixed(1)} · ${label(pov)}</span>
+        <span class="score-pill ${dialog >= 50 && dialog <= 80 ? 'good' : 'warn'}">对话 ${(dialog / 10).toFixed(1)} · ${label(dialog)}</span>
+        <span class="score-pill ${sensory >= 65 ? 'good' : 'warn'}">感官 ${(sensory / 10).toFixed(1)} · ${label(sensory)}</span>
+      `;
+
+      const advices = [];
+      if (sensory < 60) advices.push('关键场景可增加视觉、听觉等感官细节，增强画面感。');
+      if (pov < 65) advices.push('POV 切换较频繁，建议在段落过渡处增加缓冲，避免读者出戏。');
+      if (rhythm < 65) advices.push('节奏偏慢，可考虑删减冗余描写或加快事件推进。');
+      if (dialog > 80) advices.push('对话占比较高，适当增加动作与心理描写以平衡叙事。');
+      if (advices.length === 0) advices.push('整体质量均衡，继续保持当前的叙事节奏与视角控制。');
+
+      document.getElementById('diagnosis-advice').innerHTML = `<strong>综合评分 ${(avg / 10).toFixed(1)} · ${grade}</strong><br>${advices.join('')}`;
+    }
+
+    // 读者改写切换
+    function switchRewrite(target, btn) {
+      document.querySelectorAll('.rewrite-toggle .toggle-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.rewrite-panel').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('rewrite-' + target).classList.add('active');
+    }
+
+    // 滚动显示动画
+    const revealElements = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry, index) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => {
+            entry.target.classList.add('visible');
+          }, index % 3 * 100);
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+    revealElements.forEach(el => observer.observe(el));
+
+    // 下载按钮提示
+    document.getElementById('download-btn').addEventListener('click', (e) => {
+      e.preventDefault();
+      alert('下载链接尚未配置，请将 #download-btn 的 href 替换为真实下载地址。');
+    });
+
+    // 导航滚动时增加阴影
+    const nav = document.querySelector('.nav');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 20) {
+        nav.style.boxShadow = '0 4px 20px rgba(0,0,0,0.05)';
+      } else {
+        nav.style.boxShadow = 'none';
+      }
+    });
+  </script>
+</body>
+</html>
