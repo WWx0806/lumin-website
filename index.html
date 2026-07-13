@@ -5,29 +5,38 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lumin — 为长篇小说而生的 AI 写作平台</title>
   <meta name="description" content="Lumin 是一款专注于长篇小说创作的 AI 写作平台，提供续写、章节诊断、读者改写、前情提要、标签检索、模板市场等专业功能。">
-
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-root: #f5f5f7;
-      --bg-card: rgba(255, 255, 255, 0.82);
-      --bg-solid: #ffffff;
+      --bg-primary: #ffffff;
+      --bg-secondary: #f5f5f7;
+      --bg-tertiary: #fafafa;
       --text-primary: #1d1d1f;
       --text-secondary: #6e6e73;
       --text-tertiary: #86868b;
-      --apple-blue: #007aff;
-      --apple-blue-hover: #0063cc;
+      --accent-blue: #0071e3;
+      --accent-blue-hover: #0077ed;
       --accent-purple: #7c3aed;
       --accent-teal: #14b8a6;
       --accent-rose: #f43f5e;
-      --radius-full: 9999px;
-      --radius-lg: 24px;
-      --radius-md: 18px;
+      --accent-orange: #f59e0b;
+      --accent-indigo: #6366f1;
+      --accent-green: #10b981;
+      --accent-pink: #ec4899;
+      --border: rgba(0, 0, 0, 0.08);
       --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
-      --shadow-md: 0 12px 32px rgba(0, 0, 0, 0.08);
-      --shadow-lg: 0 24px 64px rgba(0, 0, 0, 0.12);
-      --font-serif: "Songti SC", "STSong", "SimSun", "PingFang SC", serif;
-      --font-sans: "PingFang SC", "SF Pro Text", -apple-system, BlinkMacSystemFont, "Microsoft YaHei", sans-serif;
-      --transition: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.06);
+      --shadow-lg: 0 24px 48px rgba(0, 0, 0, 0.08);
+      --shadow-xl: 0 32px 64px rgba(0, 0, 0, 0.12);
+      --radius-sm: 12px;
+      --radius-md: 18px;
+      --radius-lg: 24px;
+      --radius-xl: 32px;
+      --radius-full: 9999px;
+      --transition-smooth: cubic-bezier(0.16, 1, 0.3, 1);
+      --font-sans: "Inter", "Noto Sans SC", -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
     }
 
     * {
@@ -38,57 +47,76 @@
 
     html {
       scroll-behavior: smooth;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
 
     body {
       font-family: var(--font-sans);
-      background: var(--bg-root);
+      background: var(--bg-primary);
       color: var(--text-primary);
       line-height: 1.6;
       overflow-x: hidden;
     }
 
-    /* 背景光晕 */
-    .ambient-glow {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: -1;
-      background:
-        radial-gradient(circle at 15% 25%, rgba(0, 122, 255, 0.08) 0%, transparent 45%),
-        radial-gradient(circle at 85% 15%, rgba(124, 58, 237, 0.06) 0%, transparent 42%);
-      transform: translateZ(0);
-      will-change: transform;
+    ::selection {
+      background: rgba(0, 113, 227, 0.16);
+      color: var(--text-primary);
     }
 
-    /* 导航 */
+    /* Navigation */
     .nav {
       position: fixed;
       top: 0;
       left: 0;
       right: 0;
-      z-index: 100;
-      padding: 18px 40px;
+      z-index: 1000;
+      padding: 0 48px;
+      height: 72px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: rgba(245, 245, 247, 0.92);
-      border-bottom: 1px solid rgba(0, 0, 0, 0.04);
-      transform: translateZ(0);
+      background: rgba(255, 255, 255, 0.72);
+      backdrop-filter: saturate(180%) blur(20px);
+      -webkit-backdrop-filter: saturate(180%) blur(20px);
+      border-bottom: 1px solid transparent;
+      transition: background 0.4s var(--transition-smooth), border-color 0.4s var(--transition-smooth), height 0.4s var(--transition-smooth);
+    }
+
+    .nav.scrolled {
+      background: rgba(255, 255, 255, 0.92);
+      border-color: var(--border);
+      height: 64px;
     }
 
     .nav-logo {
-      font-family: var(--font-serif);
       font-size: 24px;
-      font-weight: 700;
-      letter-spacing: -0.5px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
       color: var(--text-primary);
       text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .nav-logo::before {
+      content: "L";
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--text-primary);
+      color: #fff;
+      border-radius: 8px;
+      font-size: 18px;
+      font-weight: 700;
     }
 
     .nav-links {
       display: flex;
-      gap: 32px;
+      gap: 40px;
       align-items: center;
     }
 
@@ -97,7 +125,7 @@
       font-weight: 500;
       color: var(--text-secondary);
       text-decoration: none;
-      transition: color 0.25s var(--transition);
+      transition: color 0.3s var(--transition-smooth);
     }
 
     .nav-links a:hover {
@@ -109,31 +137,32 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
-      padding: 12px 28px;
-      border-radius: var(--radius-full);
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 600;
       text-decoration: none;
+      border-radius: var(--radius-full);
       border: none;
       cursor: pointer;
-      transition: all 0.3s var(--transition);
+      transition: all 0.3s var(--transition-smooth);
+      will-change: transform;
     }
 
     .btn-primary {
-      background: var(--apple-blue);
+      background: var(--accent-blue);
       color: #fff;
-      box-shadow: 0 4px 16px rgba(0, 122, 255, 0.28);
+      padding: 12px 24px;
     }
 
     .btn-primary:hover {
-      background: var(--apple-blue-hover);
-      transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(0, 122, 255, 0.36);
+      background: var(--accent-blue-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 8px 20px rgba(0, 113, 227, 0.25);
     }
 
     .btn-secondary {
       background: rgba(0, 0, 0, 0.04);
       color: var(--text-primary);
+      padding: 12px 24px;
     }
 
     .btn-secondary:hover {
@@ -141,8 +170,18 @@
     }
 
     .btn-large {
-      padding: 16px 36px;
-      font-size: 17px;
+      padding: 16px 32px;
+      font-size: 16px;
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--accent-blue);
+      padding: 12px 24px;
+    }
+
+    .btn-ghost:hover {
+      background: rgba(0, 113, 227, 0.06);
     }
 
     /* Hero */
@@ -150,94 +189,114 @@
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      justify-content: center;
       align-items: center;
+      justify-content: center;
       text-align: center;
-      padding: 140px 40px 100px;
+      padding: 140px 48px 80px;
+      background: linear-gradient(180deg, #ffffff 0%, #f5f5f7 100%);
       position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      top: -50%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 1200px;
+      height: 1200px;
+      background: radial-gradient(circle, rgba(0, 113, 227, 0.06) 0%, transparent 60%);
+      pointer-events: none;
     }
 
     .hero-badge {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      padding: 8px 18px;
-      background: rgba(0, 122, 255, 0.08);
-      color: var(--apple-blue);
+      gap: 10px;
+      padding: 8px 16px;
+      background: rgba(0, 0, 0, 0.03);
+      border: 1px solid var(--border);
       border-radius: var(--radius-full);
       font-size: 13px;
       font-weight: 600;
+      color: var(--text-secondary);
       margin-bottom: 32px;
-      opacity: 0;
-      transform: translateY(20px);
-      animation: fadeUp 0.8s var(--transition) forwards 0.1s;
+      animation: fadeInUp 0.8s var(--transition-smooth) 0.1s both;
+    }
+
+    .hero-badge span:first-child {
+      color: var(--accent-blue);
     }
 
     .hero h1 {
-      font-family: var(--font-serif);
-      font-size: clamp(44px, 7vw, 84px);
-      font-weight: 700;
-      line-height: 1.08;
-      letter-spacing: -2px;
-      max-width: 920px;
+      font-size: clamp(48px, 8vw, 96px);
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      line-height: 1.05;
+      max-width: 1000px;
       margin-bottom: 28px;
-      opacity: 0;
-      transform: translateY(24px);
-      animation: fadeUp 0.9s var(--transition) forwards 0.25s;
+      animation: fadeInUp 0.8s var(--transition-smooth) 0.2s both;
     }
 
-    .hero p {
-      font-size: clamp(17px, 2.2vw, 22px);
+    .hero h1 .gradient-text {
+      background: linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-purple) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero > p {
+      font-size: clamp(18px, 2vw, 24px);
       color: var(--text-secondary);
-      max-width: 680px;
-      margin-bottom: 42px;
-      font-weight: 400;
-      opacity: 0;
-      transform: translateY(24px);
-      animation: fadeUp 0.9s var(--transition) forwards 0.4s;
+      max-width: 720px;
+      margin-bottom: 40px;
+      line-height: 1.6;
+      animation: fadeInUp 0.8s var(--transition-smooth) 0.3s both;
     }
 
     .hero-actions {
       display: flex;
       gap: 16px;
-      flex-wrap: wrap;
-      justify-content: center;
-      opacity: 0;
-      transform: translateY(24px);
-      animation: fadeUp 0.9s var(--transition) forwards 0.55s;
+      margin-bottom: 20px;
+      animation: fadeInUp 0.8s var(--transition-smooth) 0.4s both;
     }
 
     .hero-meta {
-      margin-top: 28px;
-      font-size: 13px;
+      font-size: 14px;
       color: var(--text-tertiary);
-      opacity: 0;
-      animation: fadeUp 0.9s var(--transition) forwards 0.7s;
+      margin-bottom: 64px;
+      animation: fadeInUp 0.8s var(--transition-smooth) 0.5s both;
     }
 
     .hero-visual {
       width: 100%;
       max-width: 1200px;
-      margin-top: 80px;
-      position: relative;
-      opacity: 0;
-      transform: translateY(40px);
-      animation: fadeUp 1s var(--transition) forwards 0.85s;
+      animation: fadeInUp 0.8s var(--transition-smooth) 0.6s both;
+      perspective: 1200px;
     }
 
     .hero-visual-frame {
-      background: rgba(255, 255, 255, 0.92);
-      border-radius: var(--radius-lg);
-      box-shadow: var(--shadow-lg);
-      border: 1px solid rgba(255, 255, 255, 0.6);
-      padding: 24px;
+      background: rgba(255, 255, 255, 0.8);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-xl);
       overflow: hidden;
+      transform: rotateX(8deg) scale(0.98);
+      transform-origin: center bottom;
+      transition: transform 0.6s var(--transition-smooth);
+    }
+
+    .hero-visual-frame:hover {
+      transform: rotateX(4deg) scale(1);
     }
 
     .hero-visual-header {
       display: flex;
       gap: 8px;
-      margin-bottom: 18px;
+      padding: 16px 20px;
+      background: rgba(0, 0, 0, 0.02);
+      border-bottom: 1px solid var(--border);
     }
 
     .hero-visual-dot {
@@ -249,79 +308,76 @@
     .hero-visual-content {
       display: grid;
       grid-template-columns: 220px 1fr 260px;
-      gap: 20px;
+      gap: 1px;
+      background: var(--border);
       min-height: 420px;
     }
 
     .mock-panel {
-      background: rgba(255, 255, 255, 0.7);
-      border-radius: var(--radius-md);
-      box-shadow: var(--shadow-sm);
-      border: 1px solid rgba(0, 0, 0, 0.03);
+      background: #fff;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
     }
 
     .mock-sidebar {
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
+      gap: 16px;
     }
 
     .mock-sidebar-row {
-      height: 14px;
+      height: 12px;
+      background: rgba(0, 0, 0, 0.06);
       border-radius: 6px;
-      background: linear-gradient(90deg, #e8e8ed 0%, #f2f2f5 100%);
     }
 
+    .mock-sidebar-row:nth-child(2) { width: 85%; }
     .mock-sidebar-row:nth-child(3) { width: 70%; }
-    .mock-sidebar-row:nth-child(5) { width: 85%; }
+    .mock-sidebar-row:nth-child(4) { width: 90%; }
+    .mock-sidebar-row:nth-child(5) { width: 60%; }
 
     .mock-editor {
-      padding: 28px;
-      display: flex;
-      flex-direction: column;
       gap: 14px;
+      justify-content: center;
     }
 
     .mock-line {
-      height: 12px;
-      border-radius: 6px;
-      background: linear-gradient(90deg, #e8e8ed 0%, #f2f2f5 100%);
+      height: 10px;
+      background: rgba(0, 0, 0, 0.06);
+      border-radius: 5px;
     }
 
-    .mock-line.short { width: 65%; }
+    .mock-line.short { width: 60%; }
 
     .mock-ai {
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
+      gap: 16px;
     }
 
     .mock-ai-card {
       padding: 16px;
-      border-radius: 14px;
-      background: rgba(255, 255, 255, 0.9);
-      box-shadow: var(--shadow-sm);
-      border: 1px solid rgba(0, 0, 0, 0.03);
+      border-radius: var(--radius-md);
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border);
     }
 
     .mock-ai-label {
       display: inline-block;
-      padding: 4px 10px;
-      border-radius: 20px;
       font-size: 11px;
-      font-weight: 600;
-      margin-bottom: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 12px;
+      padding: 4px 8px;
+      border-radius: 6px;
     }
 
-    .mock-ai-label.style { background: rgba(0, 122, 255, 0.1); color: var(--apple-blue); }
-    .mock-ai-label.plot { background: rgba(124, 58, 237, 0.1); color: var(--accent-purple); }
-    .mock-ai-label.conflict { background: rgba(244, 63, 94, 0.1); color: var(--accent-rose); }
+    .mock-ai-label.style { color: var(--accent-blue); background: rgba(0, 113, 227, 0.08); }
+    .mock-ai-label.plot { color: var(--accent-purple); background: rgba(124, 58, 237, 0.08); }
+    .mock-ai-label.conflict { color: var(--accent-rose); background: rgba(244, 63, 94, 0.08); }
 
-    /* 通用区块 */
+    /* Sections */
     section {
-      padding: 120px 40px;
+      padding: 140px 48px;
+      position: relative;
     }
 
     .container {
@@ -331,25 +387,51 @@
 
     .section-header {
       text-align: center;
-      max-width: 680px;
-      margin: 0 auto 72px;
+      max-width: 720px;
+      margin: 0 auto 80px;
     }
 
     .section-header h2 {
-      font-family: var(--font-serif);
-      font-size: clamp(34px, 4.5vw, 52px);
-      font-weight: 700;
-      line-height: 1.12;
-      margin-bottom: 18px;
-      letter-spacing: -1px;
+      font-size: clamp(36px, 5vw, 56px);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      margin-bottom: 20px;
     }
 
     .section-header p {
-      font-size: 18px;
+      font-size: 20px;
       color: var(--text-secondary);
+      line-height: 1.6;
     }
 
-    /* 特性网格 */
+    .bg-secondary { background: var(--bg-secondary); }
+    .bg-white { background: var(--bg-primary); }
+
+    /* Reveal animation */
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.8s var(--transition-smooth), transform 0.8s var(--transition-smooth);
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Features */
     .features-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -357,50 +439,303 @@
     }
 
     .feature-card {
-      background: rgba(255, 255, 255, 0.92);
+      background: var(--bg-primary);
+      border: 1px solid var(--border);
       border-radius: var(--radius-lg);
-      padding: 36px;
-      box-shadow: var(--shadow-sm);
-      border: 1px solid rgba(255, 255, 255, 0.6);
-      transition: transform 0.25s var(--transition), box-shadow 0.25s var(--transition);
-      contain: paint;
+      padding: 32px;
+      cursor: pointer;
+      transition: all 0.4s var(--transition-smooth);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .feature-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(0, 113, 227, 0.08) 0%, transparent 50%);
+      opacity: 0;
+      transition: opacity 0.4s var(--transition-smooth);
+      pointer-events: none;
     }
 
     .feature-card:hover {
-      transform: translateY(-6px);
+      transform: translateY(-4px);
       box-shadow: var(--shadow-lg);
+      border-color: rgba(0, 113, 227, 0.2);
+    }
+
+    .feature-card:hover::before {
+      opacity: 1;
     }
 
     .feature-icon {
       width: 52px;
       height: 52px;
-      border-radius: 16px;
+      border-radius: var(--radius-md);
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 24px;
-      margin-bottom: 22px;
+      margin-bottom: 20px;
+      transition: transform 0.4s var(--transition-smooth);
+    }
+
+    .feature-card:hover .feature-icon {
+      transform: scale(1.1);
     }
 
     .feature-card h3 {
       font-size: 20px;
-      font-weight: 600;
+      font-weight: 700;
       margin-bottom: 10px;
+      letter-spacing: -0.01em;
     }
 
     .feature-card p {
       font-size: 15px;
       color: var(--text-secondary);
-      line-height: 1.65;
+      line-height: 1.7;
     }
 
-    /* 亮点展示 */
-    .highlight-row {
+    /* Demo Section */
+    .demo-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 40px;
+      background: rgba(0, 0, 0, 0.03);
+      padding: 6px;
+      border-radius: var(--radius-full);
+      width: fit-content;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .demo-tab {
+      padding: 12px 24px;
+      border-radius: var(--radius-full);
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s var(--transition-smooth);
+    }
+
+    .demo-tab.active {
+      background: #fff;
+      color: var(--text-primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .demo-tab:hover:not(.active) {
+      color: var(--text-primary);
+    }
+
+    .demo-content {
+      background: var(--bg-primary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: 48px;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .demo-panel {
+      display: none;
+      animation: fadeInUp 0.5s var(--transition-smooth);
+    }
+
+    .demo-panel.active {
+      display: block;
+    }
+
+    .demo-panel h4 {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 32px;
+      text-align: center;
+    }
+
+    .candidate-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .candidate-card {
+      padding: 28px;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      background: var(--bg-tertiary);
+      cursor: pointer;
+      transition: all 0.3s var(--transition-smooth);
+    }
+
+    .candidate-card:hover,
+    .candidate-card.selected {
+      background: #fff;
+      border-color: var(--accent-blue);
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+
+    .candidate-card .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+
+    .candidate-card p {
+      font-size: 15px;
+      color: var(--text-primary);
+      line-height: 1.8;
+    }
+
+    .interactive-diagnosis {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 48px;
+      align-items: start;
+    }
+
+    .slider-group {
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    .slider-item label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 12px;
+    }
+
+    .slider-item label span {
+      color: var(--accent-blue);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .slider-item input[type="range"] {
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+      background: rgba(0, 0, 0, 0.06);
+      outline: none;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    .slider-item input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--accent-blue);
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0, 113, 227, 0.3);
+      transition: transform 0.2s var(--transition-smooth);
+    }
+
+    .slider-item input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.1);
+    }
+
+    .diagnosis-result {
+      background: var(--bg-tertiary);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      border: 1px solid var(--border);
+    }
+
+    .diagnosis-result h5 {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+
+    .score-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .score-pill {
+      padding: 8px 14px;
+      border-radius: var(--radius-full);
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .score-pill.good { background: rgba(16, 185, 129, 0.1); color: var(--accent-green); }
+    .score-pill.warn { background: rgba(245, 158, 11, 0.1); color: var(--accent-orange); }
+    .score-pill.bad { background: rgba(244, 63, 94, 0.1); color: var(--accent-rose); }
+
+    .diagnosis-result p {
+      font-size: 15px;
+      color: var(--text-secondary);
+      line-height: 1.8;
+    }
+
+    .rewrite-toggle {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 32px;
+    }
+
+    .toggle-btn {
+      padding: 10px 20px;
+      border-radius: var(--radius-full);
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--text-secondary);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s var(--transition-smooth);
+    }
+
+    .toggle-btn.active {
+      background: var(--text-primary);
+      color: #fff;
+      border-color: var(--text-primary);
+    }
+
+    .rewrite-panel {
+      display: none;
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 32px;
+      background: var(--bg-tertiary);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      font-size: 18px;
+      line-height: 1.9;
+      color: var(--text-primary);
+      animation: fadeInUp 0.4s var(--transition-smooth);
+    }
+
+    .rewrite-panel.active {
+      display: block;
+    }
+
+    /* Highlights */
+    .highlight-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
       align-items: center;
-      margin-bottom: 100px;
+      margin-bottom: 120px;
     }
 
     .highlight-row:last-child {
@@ -416,120 +751,121 @@
     }
 
     .highlight-text h3 {
-      font-family: var(--font-serif);
-      font-size: 36px;
-      font-weight: 700;
+      font-size: clamp(28px, 3.5vw, 40px);
+      font-weight: 800;
+      letter-spacing: -0.02em;
       line-height: 1.15;
-      margin-bottom: 18px;
-      letter-spacing: -0.8px;
+      margin-bottom: 20px;
     }
 
-    .highlight-text p {
-      font-size: 17px;
+    .highlight-text > p {
+      font-size: 18px;
       color: var(--text-secondary);
-      margin-bottom: 24px;
-      line-height: 1.75;
+      line-height: 1.8;
+      margin-bottom: 28px;
     }
 
     .highlight-list {
       list-style: none;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 14px;
     }
 
     .highlight-list li {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-size: 15px;
-      color: var(--text-primary);
+      font-size: 16px;
+      color: var(--text-secondary);
+      padding-left: 28px;
+      position: relative;
     }
 
     .highlight-list li::before {
-      content: "✓";
-      width: 22px;
-      height: 22px;
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 8px;
+      width: 16px;
+      height: 16px;
+      background: var(--accent-blue);
       border-radius: 50%;
-      background: rgba(20, 184, 166, 0.12);
-      color: var(--accent-teal);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-      font-weight: 700;
-      flex-shrink: 0;
+      opacity: 0.2;
+    }
+
+    .highlight-list li::after {
+      content: "";
+      position: absolute;
+      left: 4px;
+      top: 12px;
+      width: 8px;
+      height: 8px;
+      background: var(--accent-blue);
+      border-radius: 50%;
     }
 
     .highlight-visual {
-      background: rgba(255, 255, 255, 0.92);
-      border-radius: var(--radius-lg);
-      padding: 32px;
-      box-shadow: var(--shadow-md);
-      border: 1px solid rgba(255, 255, 255, 0.6);
-      contain: paint;
+      background: var(--bg-primary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: 40px;
+      box-shadow: var(--shadow-lg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 360px;
     }
 
     .diagnosis-rings {
       display: flex;
-      justify-content: center;
       gap: 24px;
-      margin-bottom: 28px;
+      margin-bottom: 40px;
     }
 
     .ring {
       width: 110px;
       height: 110px;
       border-radius: 50%;
+      border: 6px solid var(--accent-blue);
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      background: conic-gradient(var(--apple-blue) 0% 82%, #e8e8ed 82% 100%);
-      position: relative;
-    }
-
-    .ring::before {
-      content: "";
-      position: absolute;
-      inset: 8px;
-      border-radius: 50%;
       background: #fff;
     }
 
+    .ring.purple { border-color: var(--accent-purple); }
+    .ring.teal { border-color: var(--accent-teal); }
+
     .ring span {
-      position: relative;
-      z-index: 1;
-      font-size: 22px;
-      font-weight: 700;
+      font-size: 28px;
+      font-weight: 800;
       color: var(--text-primary);
     }
 
     .ring small {
-      position: relative;
-      z-index: 1;
-      font-size: 11px;
+      font-size: 12px;
       color: var(--text-secondary);
+      font-weight: 600;
     }
 
-    .ring.purple { background: conic-gradient(var(--accent-purple) 0% 76%, #e8e8ed 76% 100%); }
-    .ring.teal { background: conic-gradient(var(--accent-teal) 0% 88%, #e8e8ed 88% 100%); }
-
     .sensory-bars {
+      width: 100%;
+      max-width: 320px;
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 16px;
     }
 
     .sensory-bar {
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 12px;
     }
 
     .sensory-bar label {
-      width: 60px;
+      width: 48px;
       font-size: 13px;
+      font-weight: 600;
       color: var(--text-secondary);
       text-align: right;
     }
@@ -537,348 +873,140 @@
     .sensory-track {
       flex: 1;
       height: 8px;
+      background: rgba(0, 0, 0, 0.06);
       border-radius: 4px;
-      background: #e8e8ed;
       overflow: hidden;
     }
 
     .sensory-fill {
       height: 100%;
+      background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
       border-radius: 4px;
-      background: linear-gradient(90deg, var(--apple-blue), var(--accent-purple));
+      transition: width 0.6s var(--transition-smooth);
     }
 
     .template-tags {
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
+      gap: 12px;
+      justify-content: center;
+      max-width: 400px;
     }
 
     .template-tag {
       padding: 10px 18px;
       border-radius: var(--radius-full);
-      background: rgba(0, 0, 0, 0.04);
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border);
       font-size: 14px;
-      font-weight: 500;
-      color: var(--text-primary);
+      font-weight: 600;
+      color: var(--text-secondary);
+      transition: all 0.3s var(--transition-smooth);
     }
 
     .template-tag.featured {
-      background: rgba(0, 122, 255, 0.1);
-      color: var(--apple-blue);
+      background: var(--text-primary);
+      color: #fff;
+      border-color: var(--text-primary);
     }
 
-    /* 数据条 */
+    .template-tag:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* Stats */
     .stats-bar {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 24px;
-      max-width: 1000px;
-      margin: 0 auto;
-    }
-
-    .stat-item {
+      gap: 32px;
       text-align: center;
-      padding: 32px 20px;
-      background: rgba(255, 255, 255, 0.92);
-      border-radius: var(--radius-lg);
-      box-shadow: var(--shadow-sm);
-      border: 1px solid rgba(255, 255, 255, 0.6);
-      contain: paint;
     }
 
     .stat-item strong {
       display: block;
-      font-family: var(--font-serif);
-      font-size: 40px;
-      font-weight: 700;
+      font-size: clamp(48px, 6vw, 72px);
+      font-weight: 900;
+      letter-spacing: -0.04em;
       color: var(--text-primary);
-      margin-bottom: 6px;
+      line-height: 1;
+      margin-bottom: 12px;
     }
 
     .stat-item span {
-      font-size: 14px;
+      font-size: 16px;
       color: var(--text-secondary);
+      font-weight: 500;
     }
 
-    /* 下载区块 */
+    /* Download */
     .download-section {
-      text-align: center;
-      background: linear-gradient(180deg, transparent 0%, rgba(0, 122, 255, 0.04) 100%);
+      padding: 120px 48px;
     }
 
     .download-card {
-      max-width: 760px;
+      max-width: 800px;
       margin: 0 auto;
-      padding: 72px 48px;
-      background: rgba(255, 255, 255, 0.92);
-      border-radius: var(--radius-lg);
-      box-shadow: var(--shadow-md);
-      border: 1px solid rgba(255, 255, 255, 0.6);
-      contain: paint;
+      text-align: center;
+      padding: 80px 48px;
+      background: linear-gradient(135deg, #f5f5f7 0%, #ffffff 100%);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-xl);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .download-card::before {
+      content: "";
+      position: absolute;
+      top: -50%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(0, 113, 227, 0.1) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .download-card > * {
+      position: relative;
+      z-index: 1;
     }
 
     .download-card h2 {
-      font-family: var(--font-serif);
-      font-size: 42px;
-      font-weight: 700;
+      font-size: clamp(36px, 5vw, 56px);
+      font-weight: 800;
+      letter-spacing: -0.03em;
       margin-bottom: 16px;
-      letter-spacing: -1px;
     }
 
     .download-card p {
-      font-size: 17px;
+      font-size: 20px;
       color: var(--text-secondary);
       margin-bottom: 32px;
     }
 
-    .download-placeholder {
-      display: inline-block;
-      padding: 12px 24px;
-      background: rgba(0, 0, 0, 0.04);
-      border-radius: 12px;
-      font-size: 13px;
+    .download-meta {
+      margin-top: 16px;
+      font-size: 14px;
       color: var(--text-tertiary);
-      margin-top: 18px;
     }
 
-    /* 交互式功能演示 */
-    .demo-section {
-      background: linear-gradient(180deg, #fff 0%, var(--bg-root) 100%);
-    }
-
-    .demo-tabs {
-      display: flex;
-      justify-content: center;
-      gap: 12px;
-      margin-bottom: 42px;
-      flex-wrap: wrap;
-    }
-
-    .demo-tab {
-      padding: 12px 24px;
-      border-radius: var(--radius-full);
-      background: rgba(0, 0, 0, 0.04);
-      border: 1px solid transparent;
-      font-size: 15px;
-      font-weight: 500;
-      color: var(--text-secondary);
-      cursor: pointer;
-      transition: all 0.25s var(--transition);
-    }
-
-    .demo-tab:hover {
-      background: rgba(0, 0, 0, 0.07);
-      color: var(--text-primary);
-    }
-
-    .demo-tab.active {
-      background: #fff;
-      color: var(--apple-blue);
-      border-color: rgba(0, 122, 255, 0.2);
-      box-shadow: var(--shadow-sm);
-    }
-
-    .demo-panel {
-      display: none;
-      background: rgba(255, 255, 255, 0.92);
-      border-radius: var(--radius-lg);
-      padding: 40px;
-      box-shadow: var(--shadow-md);
-      border: 1px solid rgba(255, 255, 255, 0.6);
-      animation: fadeIn 0.3s var(--transition);
-      contain: paint;
-    }
-
-    .demo-panel.active {
-      display: block;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .demo-panel h4 {
-      font-size: 20px;
-      font-weight: 600;
-      margin-bottom: 24px;
-    }
-
-    .candidate-cards {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 18px;
-    }
-
-    .candidate-card {
-      padding: 24px;
-      border-radius: var(--radius-md);
-      background: rgba(255, 255, 255, 0.9);
-      box-shadow: var(--shadow-sm);
-      border: 2px solid transparent;
-      cursor: pointer;
-      transition: all 0.3s var(--transition);
-    }
-
-    .candidate-card:hover {
-      transform: translateY(-4px);
-      box-shadow: var(--shadow-md);
-      border-color: rgba(0, 122, 255, 0.15);
-    }
-
-    .candidate-card.selected {
-      border-color: var(--apple-blue);
-      background: rgba(0, 122, 255, 0.04);
-    }
-
-    .candidate-card .badge {
-      display: inline-block;
-      padding: 4px 10px;
-      border-radius: 20px;
-      font-size: 11px;
-      font-weight: 600;
-      margin-bottom: 12px;
-    }
-
-    .candidate-card p {
-      font-size: 14px;
-      color: var(--text-secondary);
-      line-height: 1.6;
-    }
-
-    .interactive-diagnosis {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 48px;
-      align-items: start;
-    }
-
-    .slider-group {
-      display: flex;
-      flex-direction: column;
-      gap: 18px;
-    }
-
-    .slider-item {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .slider-item label {
-      display: flex;
-      justify-content: space-between;
-      font-size: 14px;
-      font-weight: 500;
-    }
-
-    .slider-item input[type="range"] {
-      width: 100%;
-      height: 6px;
-      border-radius: 3px;
-      background: #e8e8ed;
-      outline: none;
-      -webkit-appearance: none;
-    }
-
-    .slider-item input[type="range"]::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      background: var(--apple-blue);
-      cursor: pointer;
-      box-shadow: 0 2px 8px rgba(0, 122, 255, 0.3);
-      transition: transform 0.2s;
-    }
-
-    .slider-item input[type="range"]::-webkit-slider-thumb:hover {
-      transform: scale(1.1);
-    }
-
-    .diagnosis-result {
-      padding: 28px;
-      border-radius: var(--radius-md);
-      background: rgba(255, 255, 255, 0.9);
-    }
-
-    .diagnosis-result h5 {
-      font-size: 16px;
-      font-weight: 600;
-      margin-bottom: 16px;
-    }
-
-    .score-pills {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-bottom: 18px;
-    }
-
-    .score-pill {
-      padding: 8px 14px;
-      border-radius: var(--radius-full);
-      font-size: 13px;
-      font-weight: 600;
-      background: rgba(0, 0, 0, 0.04);
-    }
-
-    .score-pill.good { background: rgba(16, 185, 129, 0.12); color: #059669; }
-    .score-pill.warn { background: rgba(245, 158, 11, 0.12); color: #d97706; }
-    .score-pill.bad { background: rgba(244, 63, 94, 0.12); color: #e11d48; }
-
-    .rewrite-toggle {
-      display: flex;
-      justify-content: center;
-      gap: 12px;
-      margin-bottom: 28px;
-    }
-
-    .toggle-btn {
-      padding: 10px 22px;
-      border-radius: var(--radius-full);
-      border: 1px solid rgba(0, 0, 0, 0.08);
-      background: #fff;
-      font-size: 14px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.25s var(--transition);
-    }
-
-    .toggle-btn.active {
-      background: var(--apple-blue);
-      color: #fff;
-      border-color: var(--apple-blue);
-    }
-
-    .rewrite-panel {
-      display: none;
-      padding: 28px;
-      border-radius: var(--radius-md);
-      background: rgba(255, 255, 255, 0.9);
-      line-height: 1.8;
-      font-size: 15px;
-    }
-
-    .rewrite-panel.active {
-      display: block;
-      animation: fadeIn 0.35s var(--transition);
-    }
-
-    /* 功能详情弹窗 */
+    /* Modal */
     .modal-overlay {
       position: fixed;
       inset: 0;
-      z-index: 200;
-      background: rgba(0, 0, 0, 0.45);
+      z-index: 2000;
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(8px);
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 40px 24px;
+      padding: 24px;
       opacity: 0;
       visibility: hidden;
-      transition: opacity 0.3s var(--transition), visibility 0.3s;
+      transition: opacity 0.3s var(--transition-smooth), visibility 0.3s var(--transition-smooth);
     }
 
     .modal-overlay.active {
@@ -887,161 +1015,121 @@
     }
 
     .modal {
+      background: #fff;
+      border-radius: var(--radius-xl);
+      max-width: 680px;
       width: 100%;
-      max-width: 800px;
-      max-height: 86vh;
+      max-height: 90vh;
       overflow-y: auto;
-      background: var(--bg-solid);
-      border-radius: var(--radius-lg);
-      box-shadow: var(--shadow-lg);
-      transform: translateY(20px) scale(0.98);
-      transition: transform 0.35s var(--transition);
+      box-shadow: var(--shadow-xl);
+      transform: scale(0.95) translateY(20px);
+      transition: transform 0.3s var(--transition-smooth);
     }
 
     .modal-overlay.active .modal {
-      transform: translateY(0) scale(1);
+      transform: scale(1) translateY(0);
     }
 
     .modal-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 28px 36px;
-      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-      position: sticky;
-      top: 0;
-      background: var(--bg-solid);
-      z-index: 1;
+      padding: 24px 32px;
+      border-bottom: 1px solid var(--border);
     }
 
     .modal-header h3 {
-      font-family: var(--font-serif);
-      font-size: 26px;
+      font-size: 22px;
       font-weight: 700;
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 12px;
     }
 
     .modal-close {
-      width: 40px;
-      height: 40px;
+      width: 36px;
+      height: 36px;
       border-radius: 50%;
       border: none;
-      background: rgba(0, 0, 0, 0.04);
-      font-size: 22px;
+      background: var(--bg-tertiary);
       color: var(--text-secondary);
+      font-size: 22px;
       cursor: pointer;
+      transition: all 0.2s var(--transition-smooth);
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: background 0.2s, color 0.2s;
     }
 
     .modal-close:hover {
-      background: rgba(0, 0, 0, 0.08);
-      color: var(--text-primary);
+      background: var(--text-primary);
+      color: #fff;
     }
 
     .modal-body {
-      padding: 36px;
+      padding: 32px;
     }
 
     .modal-image {
       width: 100%;
-      aspect-ratio: 16 / 10;
-      border-radius: var(--radius-md);
-      background: linear-gradient(135deg, #f2f2f5 0%, #e8e8ed 100%);
+      height: 240px;
+      background: var(--bg-tertiary);
+      border-radius: var(--radius-lg);
+      margin-bottom: 24px;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
-      color: var(--text-tertiary);
-      margin-bottom: 28px;
-      overflow: hidden;
-      position: relative;
-    }
-
-    .modal-image img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
+      border: 1px solid var(--border);
     }
 
     .modal-image-placeholder {
       text-align: center;
-      padding: 40px;
+      color: var(--text-secondary);
     }
 
     .modal-image-placeholder strong {
       display: block;
       font-size: 16px;
-      margin-bottom: 8px;
-      color: var(--text-secondary);
-    }
-
-    .modal-image-placeholder span {
-      font-size: 13px;
+      margin-bottom: 6px;
+      color: var(--text-primary);
     }
 
     .modal-body p {
       font-size: 16px;
       color: var(--text-secondary);
       line-height: 1.8;
-      margin-bottom: 20px;
+      margin-bottom: 16px;
     }
 
-    .modal-body h4 {
-      font-size: 17px;
-      font-weight: 600;
-      margin: 28px 0 14px;
-    }
-
-    .modal-steps {
+    .modal-features {
       list-style: none;
       display: flex;
       flex-direction: column;
       gap: 12px;
     }
 
-    .modal-steps li {
-      display: flex;
-      gap: 14px;
+    .modal-features li {
+      padding-left: 28px;
+      position: relative;
       font-size: 15px;
       color: var(--text-secondary);
       line-height: 1.6;
     }
 
-    .modal-steps .step-num {
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      background: var(--apple-blue);
-      color: #fff;
-      font-size: 13px;
+    .modal-features li::before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      color: var(--accent-blue);
       font-weight: 700;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-
-    .feature-card {
-      cursor: pointer;
     }
 
     /* Footer */
     footer {
-      padding: 60px 40px;
+      background: var(--bg-secondary);
+      padding: 40px 48px;
       text-align: center;
-      border-top: 1px solid rgba(0, 0, 0, 0.05);
-    }
-
-    footer .logo {
-      font-family: var(--font-serif);
-      font-size: 22px;
-      font-weight: 700;
-      margin-bottom: 12px;
+      border-top: 1px solid var(--border);
     }
 
     footer p {
@@ -1049,65 +1137,27 @@
       color: var(--text-tertiary);
     }
 
-    /* 动画 */
-    @keyframes fadeUp {
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .reveal {
-      opacity: 0;
-      transform: translateY(30px);
-      transition: opacity 0.8s var(--transition), transform 0.8s var(--transition);
-    }
-
-    .reveal.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    /* 响应式 */
+    /* Responsive */
     @media (max-width: 1024px) {
+      .hero-visual-content {
+        grid-template-columns: 160px 1fr 200px;
+      }
+
       .features-grid {
         grid-template-columns: repeat(2, 1fr);
       }
 
-      .hero-visual-content {
+      .candidate-cards {
         grid-template-columns: 1fr;
-        min-height: auto;
       }
 
-      .mock-sidebar, .mock-ai {
-        display: none;
-      }
-    }
-
-    @media (max-width: 768px) {
-      .nav {
-        padding: 14px 24px;
-      }
-
-      .nav-links a:not(.btn) {
-        display: none;
-      }
-
-      section {
-        padding: 80px 24px;
-      }
-
-      .hero {
-        padding: 120px 24px 80px;
-      }
-
-      .features-grid {
+      .interactive-diagnosis {
         grid-template-columns: 1fr;
       }
 
       .highlight-row {
         grid-template-columns: 1fr;
-        gap: 36px;
+        gap: 48px;
       }
 
       .highlight-row.reverse {
@@ -1116,52 +1166,78 @@
 
       .stats-bar {
         grid-template-columns: repeat(2, 1fr);
+        gap: 40px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .nav {
+        padding: 0 20px;
+      }
+
+      .nav-links a:not(.btn) {
+        display: none;
+      }
+
+      section {
+        padding: 80px 20px;
+      }
+
+      .hero {
+        padding: 120px 20px 60px;
+      }
+
+      .hero-actions {
+        flex-direction: column;
+        width: 100%;
+        max-width: 320px;
+      }
+
+      .hero-visual-content {
+        grid-template-columns: 1fr;
+        min-height: auto;
+      }
+
+      .mock-ai,
+      .mock-sidebar {
+        display: none;
+      }
+
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .demo-content {
+        padding: 28px;
       }
 
       .diagnosis-rings {
         flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .stats-bar {
+        grid-template-columns: 1fr 1fr;
       }
 
       .download-card {
         padding: 48px 28px;
       }
+    }
 
-      .candidate-cards,
-      .interactive-diagnosis {
-        grid-template-columns: 1fr;
-      }
-
-      .demo-tabs {
-        gap: 8px;
-      }
-
-      .demo-tab {
-        padding: 10px 16px;
-        font-size: 14px;
-      }
-
-      .demo-panel {
-        padding: 28px 22px;
-      }
-
-      .modal-header {
-        padding: 20px 24px;
-      }
-
-      .modal-header h3 {
-        font-size: 20px;
-      }
-
-      .modal-body {
-        padding: 24px;
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
       }
     }
   </style>
 </head>
 <body>
-  <div class="ambient-glow"></div>
-
-  <nav class="nav">
+  <nav class="nav" id="nav">
     <a href="#" class="nav-logo">Lumin</a>
     <div class="nav-links">
       <a href="#features">核心功能</a>
@@ -1175,10 +1251,10 @@
       <span>✦</span>
       <span>为长篇小说而生的 AI 写作平台</span>
     </div>
-    <h1>把灵感，写成一部完整的作品</h1>
+    <h1>把灵感，写成一部<span class="gradient-text">完整的作品</span></h1>
     <p>Lumin 将专业的小说创作流程与 AI 能力深度融合，从续写、诊断到改写、总结，让每一位作者都能专注于故事本身。</p>
     <div class="hero-actions">
-      <a href="https://github.com/WWx0806/AI-/releases/download/v1.0.3/Lumin-Setup-1.0.3.exe" class="btn btn-primary btn-large">免费下载</a>
+      <a href="https://github.com/WWx0806/AI-/releases/download/v1.0.4/Lumin-Setup-1.0.4.exe" class="btn btn-primary btn-large download-btn" data-real="true">免费下载</a>
       <a href="#features" class="btn btn-secondary btn-large">了解功能</a>
     </div>
     <div class="hero-meta">支持 Windows · macOS 即将推出</div>
@@ -1230,7 +1306,7 @@
     </div>
   </header>
 
-  <section id="features">
+  <section id="features" class="bg-secondary">
     <div class="container">
       <div class="section-header reveal">
         <h2>一套完整的小说创作工具箱</h2>
@@ -1238,7 +1314,7 @@
       </div>
       <div class="features-grid">
         <div class="feature-card reveal" onclick="openFeatureModal('continuation')">
-          <div class="feature-icon" style="background: rgba(0, 122, 255, 0.10);">✍️</div>
+          <div class="feature-icon" style="background: rgba(0, 113, 227, 0.10);">✍️</div>
           <h3>AI 智能续写</h3>
           <p>一次性生成 3 条续写候选，并标注风格、剧情推进与冲突强度，助你快速选出最符合故事走向的段落。</p>
         </div>
@@ -1286,7 +1362,7 @@
     </div>
   </section>
 
-  <section class="demo-section">
+  <section class="demo-section bg-white">
     <div class="container">
       <div class="section-header reveal">
         <h2>亲手体验 Lumin 的能力</h2>
@@ -1300,12 +1376,11 @@
       </div>
 
       <div class="demo-content reveal">
-        <!-- AI 续写候选 -->
         <div class="demo-panel active" id="tab-continuation">
           <h4>输入上文后，Lumin 一次性给出 3 条续写候选</h4>
           <div class="candidate-cards">
             <div class="candidate-card selected" onclick="selectCandidate(this)">
-              <span class="badge" style="background: rgba(0,122,255,0.1); color: var(--apple-blue);">风格 · 细腻</span>
+              <span class="badge" style="background: rgba(0,113,227,0.1); color: var(--accent-blue);">风格 · 细腻</span>
               <p>雨丝斜斜地落在窗台上，林晚把咖啡杯攥得更紧了些。她没有回头，只是从玻璃倒影里看着那个站在门口的男人。</p>
             </div>
             <div class="candidate-card" onclick="selectCandidate(this)">
@@ -1319,7 +1394,6 @@
           </div>
         </div>
 
-        <!-- 章节诊断模拟 -->
         <div class="demo-panel" id="tab-diagnosis">
           <h4>拖动滑块，实时查看章节质量诊断结果</h4>
           <div class="interactive-diagnosis">
@@ -1349,14 +1423,11 @@
                 <span class="score-pill good">对话 6.5 · 适中</span>
                 <span class="score-pill warn">感官 5.8 · 可加强</span>
               </div>
-              <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.7;" id="diagnosis-advice">
-                整体节奏把握良好，建议在关键场景增加感官细节描写，同时检查 POV 切换处是否造成读者出戏。
-              </p>
+              <p id="diagnosis-advice">整体节奏把握良好，建议在关键场景增加感官细节描写，同时检查 POV 切换处是否造成读者出戏。</p>
             </div>
           </div>
         </div>
 
-        <!-- 读者画像改写 -->
         <div class="demo-panel" id="tab-rewrite">
           <h4>选择目标读者， instantly 看到改写差异</h4>
           <div class="rewrite-toggle">
@@ -1378,7 +1449,7 @@
     </div>
   </section>
 
-  <section id="highlights" style="background: #fff;">
+  <section id="highlights" class="bg-secondary">
     <div class="container">
       <div class="section-header reveal">
         <h2>为什么选择 Lumin</h2>
@@ -1446,7 +1517,7 @@
           </ul>
         </div>
         <div class="highlight-visual">
-          <div class="mock-panel mock-sidebar" style="gap: 14px; min-height: 220px;">
+          <div class="mock-panel mock-sidebar" style="gap: 14px; min-height: 220px; width: 100%; max-width: 320px;">
             <div class="mock-sidebar-row"></div>
             <div style="display: flex; gap: 8px; flex-wrap: wrap; margin: 8px 0;">
               <span class="template-tag featured">连载中</span>
@@ -1462,11 +1533,8 @@
     </div>
   </section>
 
-  <section>
+  <section class="stats-section bg-white">
     <div class="container">
-      <div class="section-header reveal">
-        <h2>数字背后的创作体验</h2>
-      </div>
       <div class="stats-bar reveal">
         <div class="stat-item">
           <strong>9+</strong>
@@ -1488,98 +1556,140 @@
     </div>
   </section>
 
-  <section id="download" class="download-section">
-    <div class="container">
-      <div class="download-card reveal">
-        <h2>开始你的下一部长篇小说</h2>
-        <p>下载 Lumin，体验 AI 与专业写作流程结合的全新创作方式。</p>
-        <a href="https://github.com/WWx0806/AI-/releases/download/v1.0.3/Lumin-Setup-1.0.3.exe" class="btn btn-primary btn-large" id="download-btn">立即下载</a>
-        <div class="download-placeholder">Windows · v1.0.3 · Lumin-Setup-1.0.3.exe</div>
-      </div>
+  <section id="download" class="download-section bg-secondary">
+    <div class="download-card reveal">
+      <h2>开始你的下一部长篇小说</h2>
+      <p>下载 Lumin for Windows，即刻体验 AI 驱动的长篇小说创作流程。</p>
+      <a href="https://github.com/WWx0806/AI-/releases/download/v1.0.4/Lumin-Setup-1.0.4.exe" class="btn btn-primary btn-large download-btn" data-real="true">免费下载 Windows 版</a>
+      <div class="download-meta">Windows · v1.0.4 · Lumin-Setup-1.0.4.exe</div>
     </div>
   </section>
 
-  <div class="modal-overlay" id="feature-modal" onclick="closeFeatureModal(event)">
-    <div class="modal" onclick="event.stopPropagation()">
+  <footer>
+    <a href="#" class="nav-logo" style="justify-content: center; margin-bottom: 16px;">Lumin</a>
+    <p>&copy; 2026 Lumin. 为长篇小说而生的 AI 写作平台。保留所有权利。</p>
+  </footer>
+
+  <div class="modal-overlay" id="feature-modal">
+    <div class="modal">
       <div class="modal-header">
-        <h3><span id="modal-icon"></span> <span id="modal-title"></span></h3>
-        <button class="modal-close" onclick="closeFeatureModal()">×</button>
+        <h3 id="modal-title"><span id="modal-icon"></span><span id="modal-title-text"></span></h3>
+        <button class="modal-close" aria-label="关闭" onclick="closeFeatureModal()">&times;</button>
       </div>
       <div class="modal-body">
-        <div class="modal-image" id="modal-image">
+        <div class="modal-image">
           <div class="modal-image-placeholder">
-            <strong>功能截图占位</strong>
-            <span>后续将替换为平台真实界面截图</span>
+            <strong id="modal-image-title">功能预览</strong>
+            <span>Mock UI 示意</span>
           </div>
         </div>
         <p id="modal-desc"></p>
-        <h4>使用流程</h4>
-        <ul class="modal-steps" id="modal-steps"></ul>
+        <ul class="modal-features" id="modal-steps"></ul>
       </div>
     </div>
   </div>
 
-  <footer>
-    <div class="logo">Lumin</div>
-    <p>© 2026 Lumin. 为长篇小说创作者打造。</p>
-  </footer>
-
   <script>
-    // 功能详情数据
+    // Feature details data
     const featureDetails = {
       continuation: {
         icon: '✍️',
         title: 'AI 智能续写',
-        desc: '在编辑器中输入上文后，点击右侧 AI 工具栏的“续写”按钮，Lumin 会调用你配置的 AI 接口，一次生成 3 条不同风格的续写候选。每条候选都附带“风格”“剧情推进”“冲突强度”标签，方便你根据当前章节需要快速挑选或组合。',
-        steps: ['选中或定位到需要续写的段落', '点击“AI 续写”，等待生成 3 条候选', '对比标签与内容，点击心仪候选插入编辑器']
+        desc: 'Lumin 会基于已有上下文一次性生成多条续写候选，并自动标注风格倾向、剧情推进力度与冲突强度，让你快速选出最贴合故事走向的段落。',
+        steps: [
+          '选中需要续写的章节或段落',
+          '点击“AI 续写”生成 3 条候选',
+          '对比风格、剧情、冲突标签',
+          '一键插入或替换原文'
+        ]
       },
       diagnosis: {
         icon: '🔍',
         title: '章节质量诊断',
-        desc: '“章节诊断”会从节奏、POV 一致性、对话占比、感官描写密度四个维度对当前章节进行量化评分。诊断报告包含综合评分环、分项评分状态、问题片段定位与改进建议，帮助你像编辑一样审视作品。',
-        steps: ['在编辑器中打开目标章节', '选择“章节诊断”并发送当前章节', '查看评分环与感官密度条，逐项优化']
+        desc: '从节奏、POV 一致性、对话占比到感官描写密度，多维度量化分析章节质量，并给出可执行的改进建议。',
+        steps: [
+          '选择目标章节',
+          '运行“章节诊断”分析',
+          '查看节奏、POV、对话、感官评分',
+          '按建议逐条优化'
+        ]
       },
       rewrite: {
         icon: '🎯',
         title: '读者画像改写',
-        desc: '指定目标读者群体（如“青少年奇幻读者”“网文快节奏读者”），Lumin 会在保留原意与核心剧情的前提下，调整措辞偏好、叙事节奏与爽点密度。改写结果支持复制、插入光标处或替换原文。',
-        steps: ['输入目标受众描述', '选择改写来源（当前章节或选中文字）', '调整侧重维度，获取改写结果并应用']
+        desc: '根据目标读者群体调整措辞偏好、叙事节奏与爽点密度，在保留原意和核心剧情的前提下精准适配受众。',
+        steps: [
+          '输入或选中待改写段落',
+          '选择目标读者画像',
+          '生成适配版本',
+          '对比差异并应用'
+        ]
       },
       recap: {
         icon: '📖',
         title: '前情提要',
-        desc: '“前情提要”提供两种模式：上章回顾会自动梳理 1-3 个前序章节的关键事件、人物状态与未解悬念；选中总结则会分析你选中的文本，输出剧情作用、人物关系、伏笔与情感影响等要点。',
-        steps: ['点击“前情提要”打开弹窗', '切换“上章回顾”或“选中总结”标签', '将生成的内容复制或插入到当前章节']
+        desc: '自动生成上章回顾与选中剧情总结，帮你梳理关键事件、人物状态、未解悬念与剧情作用。',
+        steps: [
+          '定位到当前章节',
+          '点击“前情提要”',
+          '查看关键事件与人物状态',
+          '快速进入写作状态'
+        ]
       },
       tags: {
         icon: '🏷️',
         title: '书籍标签与检索',
-        desc: '在“书籍信息”弹窗中为当前书籍添加标签（如“连载中”“已完结”“待润色”），标签会持久化写入书籍 JSON。项目库弹窗支持按标签、字数范围、最近编辑时间筛选，并展示最近打开的书籍列表。',
-        steps: ['打开“书籍信息”，输入并添加标签', '使用“打开项目”进入项目库', '通过标签或筛选条件快速定位书籍']
+        desc: '为书籍添加自定义标签，通过标签、字数与最近编辑时间快速筛选项目库，并保留最近打开记录。',
+        steps: [
+          '为项目添加标签',
+          '使用标签组合筛选',
+          '按字数或时间排序',
+          '快速打开最近项目'
+        ]
       },
       import: {
         icon: '📥',
         title: '多格式导入',
-        desc: '支持导入 .txt、.md、.docx、.pdf 文件。导入时可选择自动章节识别、仅“第 X 章”、仅“第 X 回”、纯数字标题、不拆分等多种策略；批量导入时支持正则拆分，方便把已有稿件快速迁移到 Lumin。',
-        steps: ['点击导入按钮，选择本地文件', '选择章节拆分策略并预览', '确认导入后自动按规则生成章节']
+        desc: '支持 .txt、.md、.docx、.pdf 导入，并提供自动章节识别、仅“第 X 章”、正则拆分等多种拆分策略。',
+        steps: [
+          '选择本地文件导入',
+          '选择拆分策略',
+          '预览识别结果',
+          '一键生成章节结构'
+        ]
       },
       editor: {
         icon: '📝',
         title: 'Markdown 与富文本统一',
-        desc: '默认使用 Markdown 编辑器，左侧编辑、右侧实时预览，右侧大纲面板根据 H2/H3 自动生成章节导航。你可以随时在 Markdown 与富文本之间切换，原文 Markdown 会被保留，避免内容丢失。',
-        steps: ['在 Markdown 编辑器中写作', '通过工具栏切换实时预览或大纲', '需要时切换为富文本编辑器继续编辑']
+        desc: '默认 Markdown 编辑器支持实时分屏预览与章节大纲导航，同时可在 Markdown 与富文本之间双向切换并保留原文。',
+        steps: [
+          '使用 Markdown 快速写作',
+          '实时预览排版效果',
+          '在大纲中跳转章节',
+          '按需切换富文本模式'
+        ]
       },
       templates: {
         icon: '🎨',
         title: '模板市场',
-        desc: '内置悬疑推理、科幻世界、言情甜虐、东方玄幻、仙侠修真五大题材模板。每个模板包含故事梗概、人物弧光、节拍表与章节结构，创建新书时一键套用即可生成完整框架。',
-        steps: ['打开“模板市场”弹窗', '浏览基础模板、题材模板与我的模板', '选择模板并创建新书，自动生成框架']
+        desc: '内置悬疑、科幻、言情、玄幻、仙侠等题材模板，包含故事梗概、人物弧光、节拍表与章节结构，可一键套用。',
+        steps: [
+          '浏览内置题材模板',
+          '查看梗概、人物与节拍',
+          '一键创建新书',
+          '基于模板扩展创作'
+        ]
       },
       focus: {
         icon: '🌙',
         title: '沉浸式专注模式',
-        desc: '一键进入全屏专注模式，隐藏侧边栏与多余 UI，只保留编辑区域与顶部控制栏。控制栏保留 AI 助手按钮，并支持 Ctrl/Cmd+Shift+A 快捷键召唤，退出时自动恢复之前的面板状态。',
-        steps: ['点击专注模式按钮进入全屏', '使用控制栏或快捷键继续调用 AI', '再次点击退出，恢复原有布局']
+        desc: '一键进入无干扰写作环境，保留 AI 助手入口，支持快捷键召唤，让创作过程既安静又智能。',
+        steps: [
+          '点击专注模式按钮',
+          '隐藏界面干扰元素',
+          '使用快捷键召唤 AI',
+          '沉浸写作，随时求助'
+        ]
       }
     };
 
@@ -1587,42 +1697,42 @@
       const data = featureDetails[key];
       if (!data) return;
       document.getElementById('modal-icon').textContent = data.icon;
-      document.getElementById('modal-title').textContent = data.title;
+      document.getElementById('modal-title-text').textContent = data.title;
+      document.getElementById('modal-image-title').textContent = data.title;
       document.getElementById('modal-desc').textContent = data.desc;
-      document.getElementById('modal-steps').innerHTML = data.steps.map((s, i) =>
-        `<li><span class="step-num">${i + 1}</span>${s}</li>`
-      ).join('');
+      const stepsEl = document.getElementById('modal-steps');
+      stepsEl.innerHTML = '';
+      data.steps.forEach(step => {
+        const li = document.createElement('li');
+        li.textContent = step;
+        stepsEl.appendChild(li);
+      });
       document.getElementById('feature-modal').classList.add('active');
       document.body.style.overflow = 'hidden';
     }
 
-    function closeFeatureModal(event) {
-      if (event && event.target !== document.getElementById('feature-modal') && event.target.closest('.modal-close') === null) return;
+    function closeFeatureModal() {
       document.getElementById('feature-modal').classList.remove('active');
       document.body.style.overflow = '';
     }
 
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') closeFeatureModal();
-    });
-
-    // 功能演示标签切换
+    // Tab switching
     document.querySelectorAll('.demo-tab').forEach(tab => {
       tab.addEventListener('click', () => {
         document.querySelectorAll('.demo-tab').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.demo-panel').forEach(p => p.classList.remove('active'));
         tab.classList.add('active');
-        document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+        const target = tab.dataset.tab;
+        document.querySelectorAll('.demo-panel').forEach(panel => panel.classList.remove('active'));
+        const targetPanel = document.getElementById('tab-' + target);
+        if (targetPanel) targetPanel.classList.add('active');
       });
     });
 
-    // 续写候选选择
     function selectCandidate(card) {
-      document.querySelectorAll('.candidate-card').forEach(c => c.classList.remove('selected'));
+      card.parentElement.querySelectorAll('.candidate-card').forEach(c => c.classList.remove('selected'));
       card.classList.add('selected');
     }
 
-    // 章节诊断模拟
     function updateDiagnosis() {
       const rhythm = +document.getElementById('slider-rhythm').value;
       const pov = +document.getElementById('slider-pov').value;
@@ -1634,70 +1744,94 @@
       document.getElementById('val-dialog').textContent = dialog;
       document.getElementById('val-sensory').textContent = sensory;
 
-      const avg = Math.round((rhythm + pov + dialog + sensory) / 4);
-      const grade = avg >= 80 ? '优秀' : avg >= 65 ? '良好' : avg >= 50 ? '中等' : '需改进';
-
-      function label(v) {
-        return v >= 80 ? '良好' : v >= 65 ? '适中' : v >= 50 ? '注意' : '需加强';
+      function pillClass(val) {
+        if (val >= 80) return 'good';
+        if (val >= 60) return 'warn';
+        return 'bad';
+      }
+      function pillLabel(val) {
+        if (val >= 80) return '良好';
+        if (val >= 60) return '注意';
+        return '需优化';
       }
 
       document.getElementById('score-pills').innerHTML = `
-        <span class="score-pill ${rhythm >= 65 ? 'good' : 'warn'}">节奏 ${(rhythm / 10).toFixed(1)} · ${label(rhythm)}</span>
-        <span class="score-pill ${pov >= 65 ? 'good' : 'warn'}">POV ${(pov / 10).toFixed(1)} · ${label(pov)}</span>
-        <span class="score-pill ${dialog >= 50 && dialog <= 80 ? 'good' : 'warn'}">对话 ${(dialog / 10).toFixed(1)} · ${label(dialog)}</span>
-        <span class="score-pill ${sensory >= 65 ? 'good' : 'warn'}">感官 ${(sensory / 10).toFixed(1)} · ${label(sensory)}</span>
+        <span class="score-pill ${pillClass(rhythm)}">节奏 ${(rhythm/10).toFixed(1)} · ${pillLabel(rhythm)}</span>
+        <span class="score-pill ${pillClass(pov)}">POV ${(pov/10).toFixed(1)} · ${pillLabel(pov)}</span>
+        <span class="score-pill ${pillClass(dialog)}">对话 ${(dialog/10).toFixed(1)} · ${pillLabel(dialog)}</span>
+        <span class="score-pill ${pillClass(sensory)}">感官 ${(sensory/10).toFixed(1)} · ${pillLabel(sensory)}</span>
       `;
 
-      const advices = [];
-      if (sensory < 60) advices.push('关键场景可增加视觉、听觉等感官细节，增强画面感。');
-      if (pov < 65) advices.push('POV 切换较频繁，建议在段落过渡处增加缓冲，避免读者出戏。');
-      if (rhythm < 65) advices.push('节奏偏慢，可考虑删减冗余描写或加快事件推进。');
-      if (dialog > 80) advices.push('对话占比较高，适当增加动作与心理描写以平衡叙事。');
-      if (advices.length === 0) advices.push('整体质量均衡，继续保持当前的叙事节奏与视角控制。');
-
-      document.getElementById('diagnosis-advice').innerHTML = `<strong>综合评分 ${(avg / 10).toFixed(1)} · ${grade}</strong><br>${advices.join('')}`;
+      const avg = (rhythm + pov + dialog + sensory) / 4;
+      let advice = '';
+      if (avg >= 75) {
+        advice = '整体质量优秀，建议在保持节奏的同时继续打磨细节，让阅读体验更加完整。';
+      } else if (avg >= 60) {
+        advice = '章节基础扎实，可在薄弱环节（如感官描写或 POV 一致性）进行针对性优化。';
+      } else {
+        advice = '本章存在明显改进空间，建议优先调整节奏与视角稳定性，再补充感官细节。';
+      }
+      document.getElementById('diagnosis-advice').textContent = advice;
     }
 
-    // 读者改写切换
-    function switchRewrite(target, btn) {
-      document.querySelectorAll('.rewrite-toggle .toggle-btn').forEach(b => b.classList.remove('active'));
-      document.querySelectorAll('.rewrite-panel').forEach(p => p.classList.remove('active'));
+    function switchRewrite(type, btn) {
+      btn.parentElement.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
-      document.getElementById('rewrite-' + target).classList.add('active');
+      document.querySelectorAll('.rewrite-panel').forEach(p => p.classList.remove('active'));
+      const panel = document.getElementById('rewrite-' + type);
+      if (panel) panel.classList.add('active');
     }
 
-    // 滚动显示动画
-    const revealElements = document.querySelectorAll('.reveal');
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry, index) => {
+    // Scroll reveal
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
         if (entry.isIntersecting) {
-          setTimeout(() => {
-            entry.target.classList.add('visible');
-          }, index % 3 * 100);
-          observer.unobserve(entry.target);
+          entry.target.classList.add('visible');
+          revealObserver.unobserve(entry.target);
         }
       });
-    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
 
-    revealElements.forEach(el => observer.observe(el));
+    document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 
-    // 下载按钮提示（仅在未配置链接时拦截）
-    document.getElementById('download-btn').addEventListener('click', (e) => {
-      const href = document.getElementById('download-btn').getAttribute('href');
-      if (!href || href === '#' || href.includes('placeholder')) {
-        e.preventDefault();
-        alert('下载链接尚未配置，请将 #download-btn 的 href 替换为真实下载地址。');
+    // Nav scroll effect
+    const nav = document.getElementById('nav');
+    function updateNav() {
+      if (window.scrollY > 20) {
+        nav.classList.add('scrolled');
+      } else {
+        nav.classList.remove('scrolled');
       }
+    }
+    window.addEventListener('scroll', updateNav, { passive: true });
+    updateNav();
+
+    // Feature card mouse glow
+    document.querySelectorAll('.feature-card').forEach(card => {
+      card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = ((e.clientX - rect.left) / rect.width) * 100 + '%';
+        const y = ((e.clientY - rect.top) / rect.height) * 100 + '%';
+        card.style.setProperty('--mouse-x', x);
+        card.style.setProperty('--mouse-y', y);
+      });
     });
 
-    // 导航滚动时增加阴影
-    const nav = document.querySelector('.nav');
-    window.addEventListener('scroll', () => {
-      if (window.scrollY > 20) {
-        nav.style.boxShadow = '0 4px 20px rgba(0,0,0,0.05)';
-      } else {
-        nav.style.boxShadow = 'none';
-      }
+    // Escape to close modal
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeFeatureModal();
+    });
+
+    // Download placeholder interception
+    document.querySelectorAll('.download-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const href = btn.getAttribute('href') || '';
+        const isReal = btn.dataset.real === 'true';
+        if (!isReal && (href === '#' || href === '' || href.startsWith('javascript'))) {
+          e.preventDefault();
+          alert('下载链接即将上线，敬请期待。');
+        }
+      });
     });
   </script>
 </body>
